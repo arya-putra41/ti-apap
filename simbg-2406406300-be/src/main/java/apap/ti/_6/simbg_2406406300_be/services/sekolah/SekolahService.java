@@ -1,4 +1,4 @@
-package apap.ti._6.simbg_2406406300_be.services;
+package apap.ti._6.simbg_2406406300_be.services.sekolah;
 
 import java.util.List;
 

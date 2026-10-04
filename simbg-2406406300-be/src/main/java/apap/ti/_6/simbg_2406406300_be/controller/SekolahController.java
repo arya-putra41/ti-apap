@@ -19,7 +19,7 @@ import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahResponse;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
-import apap.ti._6.simbg_2406406300_be.services.SekolahService;
+import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahService;
 import jakarta.validation.Valid;
 
 @Controller

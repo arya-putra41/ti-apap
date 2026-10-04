@@ -27,7 +27,7 @@ public class Sekolah extends BaseEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, unique = true, check = @CheckConstraint(name = "npsn_harus_8_karakter", constraint = "char_length(npsn) = 255"))
+    @Column(nullable = false, unique = true, check = @CheckConstraint(name = "npsn_harus_8_karakter", constraint = "char_length(npsn) = 8"))
     private String npsn;
 
     @Column(nullable = false)
