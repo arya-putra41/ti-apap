@@ -1,6 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +32,7 @@ public class RiwayatStatusPenerima extends ReadOnlyEntity {
     private String statusBaru;
 
     @Column(nullable = false)
-    private LocalDateTime tanggalPerubahan;
+    private ZonedDateTime tanggalPerubahan;
 
     @Column(nullable = false)
     private String keterangan;

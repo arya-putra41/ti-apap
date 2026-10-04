@@ -2,6 +2,9 @@ package apap.ti._6.simbg_2406406300_be.models;
 
 import java.time.LocalDate;
 
+import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahResponse;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +27,7 @@ public class Sekolah extends BaseEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, check = @CheckConstraint(name = "npsn_harus_8_karakter", constraint = "char_length(npsn) = 255"))
     private String npsn;
 
     @Column(nullable = false)
@@ -59,4 +62,53 @@ public class Sekolah extends BaseEntity {
 
     @Column(nullable = false)
     private String statusMitra;
+
+    public void updateFromRequest(UpdateSekolahRequest request) {
+        this.setNamaSekolah(request.getNamaSekolah());
+        this.setJenjang(request.getJenjang());
+        this.setProvinsi(request.getProvinsi());
+        this.setKota(request.getKota());
+        this.setKecamatan(request.getKecamatan());
+        this.setDesa(request.getDesa());
+        this.setJalan(request.getJalan());
+        this.setNamaKepalaSekolah(request.getNamaKepalaSekolah());
+        this.setTeleponSekolah(request.getTeleponSekolah());
+        this.setTanggalBergabung(request.getTanggalBergabung());
+    }
+
+    public SekolahResponse toResponse() {
+        SekolahResponse response = SekolahResponse.builder()
+            .id(id)
+            .npsn(npsn)
+            .namaSekolah(namaSekolah)
+            .jenjang(jenjang)
+            .provinsi(provinsi)
+            .kota(kota)
+            .kecamatan(kecamatan)
+            .desa(desa)
+            .jalan(jalan)
+            .namaKepalaSekolah(namaKepalaSekolah)
+            .teleponSekolah(teleponSekolah)
+            .tanggalBergabung(tanggalBergabung)
+            .statusMitra(statusMitra)
+            .build();
+
+        return response;
+    }
+
+    public SekolahBasicResponse toBasicResponse() {
+        SekolahBasicResponse basicResponse = SekolahBasicResponse.builder()
+            .id(id)
+            .npsn(npsn)
+            .namaSekolah(namaSekolah)
+            .jenjang(jenjang)
+            .statusMitra(statusMitra)
+            .build();
+
+        return basicResponse;
+    }
+
+    public void deactivate() {
+        this.statusMitra = "NONAKTIF";
+    }
 }

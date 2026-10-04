@@ -1,6 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 @MappedSuperclass
 public abstract class ReadOnlyEntity {
     @CreationTimestamp
-    protected LocalDateTime createdAt;
+    protected ZonedDateTime createdAt;
 }

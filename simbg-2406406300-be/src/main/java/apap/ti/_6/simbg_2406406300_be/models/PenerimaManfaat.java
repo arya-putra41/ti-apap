@@ -1,7 +1,7 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,7 +51,7 @@ public class PenerimaManfaat extends BaseEntity {
     private String petugasVerifikasiId;
 
     @Column(nullable = false)
-    private LocalDateTime tanggalPengajuan;
+    private ZonedDateTime tanggalPengajuan;
 
-    private LocalDateTime tanggalVerifikasi;
+    private ZonedDateTime tanggalVerifikasi;
 }
