@@ -147,25 +147,6 @@ public class Seeder implements CommandLineRunner {
             }
         }
 
-        // Buat sekolah tidak aktif untuk kepentingan testing rombel
-        Sekolah sekolahInactive = Sekolah.builder()
-                    .id(idGeneratorService.generateSekolahId())
-                    .npsn("20210126")
-                    .namaSekolah("SMAN 69 Tidak Aktif")
-                    .jenjang("SMA/SMK")
-                    .provinsi("Jawa Barat")
-                    .kota("Depok")
-                    .kecamatan("Beji")
-                    .desa("Kemiri Muka")
-                    .jalan("Jl. Margonda Raya No. 1")
-                    .namaKepalaSekolah("Rie Takahashi")
-                    .teleponSekolah("0219999999")
-                    .tanggalBergabung(LocalDate.of(2026, 7, 1))
-                    .rombel(new ArrayList<>())
-                    .statusMitra("NONAKTIF")
-                .build();
-        sekolahRepository.save(sekolahInactive);
-
         // TODO: Ciptakan penerima
     }
 }

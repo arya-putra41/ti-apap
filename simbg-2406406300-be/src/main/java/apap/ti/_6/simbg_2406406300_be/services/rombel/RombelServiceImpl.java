@@ -79,6 +79,8 @@ public class RombelServiceImpl implements RombelService {
             throw new RombelIllegalChangeStatusException(request.getId());
         }
 
+        // TODO: setelah penerima implemented, jika rombel ditutup nonaktifkan semua penerima di rombel (cascading)
+
         rombel.updateFromRequest(request);
         return rombelRepository.save(rombel);
     }
