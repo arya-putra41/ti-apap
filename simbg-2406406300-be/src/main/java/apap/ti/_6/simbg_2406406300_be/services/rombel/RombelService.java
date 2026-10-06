@@ -8,7 +8,7 @@ import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.KuotaTooLowException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelIllegalChangeStatusException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelNotFoundException;
-import apap.ti._6.simbg_2406406300_be.exceptions.rombel.SekolahTidakAktifException;
+import apap.ti._6.simbg_2406406300_be.exceptions.rombel.SekolahInactiveException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 
@@ -17,7 +17,7 @@ public interface RombelService {
 
     public RombonganBelajar findRombelById(String id) throws RombelNotFoundException;
 
-    public RombonganBelajar createRombel(CreateRombelRequest request) throws SekolahNotFoundException, SekolahTidakAktifException;
+    public RombonganBelajar createRombel(CreateRombelRequest request) throws SekolahNotFoundException, SekolahInactiveException;
 
     public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException;
 

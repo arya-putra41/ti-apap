@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.services.rombel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.KuotaTooLowException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelIllegalChangeStatusException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelNotFoundException;
-import apap.ti._6.simbg_2406406300_be.exceptions.rombel.SekolahTidakAktifException;
+import apap.ti._6.simbg_2406406300_be.exceptions.rombel.SekolahInactiveException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
@@ -44,13 +45,13 @@ public class RombelServiceImpl implements RombelService {
 
     @Override
     public RombonganBelajar createRombel(CreateRombelRequest request)
-            throws SekolahNotFoundException, SekolahTidakAktifException {
+            throws SekolahNotFoundException, SekolahInactiveException {
         // check sekolah ada (exception di throw oleh service sekolah)
         Sekolah sekolah = sekolahQueryService.findSekolahById(request.getSekolahId());
         
         boolean sekolahAktif = sekolah.getStatusMitra().equals("AKTIF");
         if (sekolahAktif == false) {
-            throw new SekolahTidakAktifException(request.getSekolahId());
+            throw new SekolahInactiveException(request.getSekolahId());
         }
 
         RombonganBelajar newRombel = RombonganBelajar.builder()
@@ -61,6 +62,7 @@ public class RombelServiceImpl implements RombelService {
             .tahunAjaran(request.getTahunAjaran())
             .kuotaPenerima(request.getKuotaPenerima())
             .jumlahPenerimaTerdaftar(0)
+            .penerima(new ArrayList<>())
             .status("AKTIF")
         .build();
 
@@ -99,6 +101,7 @@ public class RombelServiceImpl implements RombelService {
             .jumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar())
             .sisaKuota(rombel.getKuotaPenerima() - rombel.getJumlahPenerimaTerdaftar())
             .status(rombel.getStatus())
+            .penerima(rombel.getPenerima())
 
             .namaSekolah(sekolahPemilikRombel.getNamaSekolah())
 

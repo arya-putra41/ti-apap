@@ -3,6 +3,7 @@ package apap.ti._6.simbg_2406406300_be.models;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -30,7 +31,7 @@ public class PenerimaManfaat extends BaseEntity {
     @Column(nullable = false)
     private String nama;
 
-    @Column(nullable = false)
+    @Column(nullable = false, check = @CheckConstraint(name = "nisn_harus_10_karakter", constraint = "char_length(nisn) = 10"))
     private String nisn;
 
     @Column(nullable = false)

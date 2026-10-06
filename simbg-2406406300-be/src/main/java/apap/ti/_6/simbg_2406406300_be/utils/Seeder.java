@@ -135,6 +135,7 @@ public class Seeder implements CommandLineRunner {
                         .kuotaPenerima(20)
                         .jumlahPenerimaTerdaftar(0)
                         .status("AKTIF")
+                        .penerima(new ArrayList<>())
                         .build();
 
                         listRombel.add(newRombel);

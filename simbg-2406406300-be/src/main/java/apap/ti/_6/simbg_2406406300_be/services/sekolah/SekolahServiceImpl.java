@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.CreateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnExistsException;
-import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnInexactLengthException;
-import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.RombelMasihAktifException;
+import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.RombelStillActiveException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahIllegalChangeException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
@@ -43,11 +42,8 @@ public class SekolahServiceImpl implements SekolahService {
     }
 
     @Override
-    public Sekolah createSekolah(CreateSekolahRequest request) throws NpsnExistsException, NpsnInexactLengthException {
-        // Check NPSN: Apakah ada? Apakah 8 character?
-        if (request.getNpsn().length() != 8) {
-            throw new NpsnInexactLengthException();
-        }
+    public Sekolah createSekolah(CreateSekolahRequest request) throws NpsnExistsException {
+        // Check NPSN: Apakah ada?
         boolean existsByNpsn = sekolahRepository.existsByNpsn(request.getNpsn());
         if (existsByNpsn) {
             throw new NpsnExistsException(request.getNpsn());
@@ -90,13 +86,13 @@ public class SekolahServiceImpl implements SekolahService {
     }
 
     @Override
-    public Sekolah deactivateSekolah(String id) throws SekolahNotFoundException, RombelMasihAktifException {
+    public Sekolah deactivateSekolah(String id) throws SekolahNotFoundException, RombelStillActiveException {
         Sekolah deactivated = findSekolahById(id);
 
         // Cek bahwa semua rombel di sekolah tersebut sudah ditutup
-        boolean adaRombelMasihAktif = rombelQueryService.rombelAktifExistsBySekolahId(id);
-        if (adaRombelMasihAktif == true) {
-            throw new RombelMasihAktifException();
+        boolean adaRombelStillActive = rombelQueryService.rombelAktifExistsBySekolahId(id);
+        if (adaRombelStillActive == true) {
+            throw new RombelStillActiveException();
         }
 
         deactivated.deactivate();

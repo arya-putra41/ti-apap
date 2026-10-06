@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateSekolahRequest {
     @NotEmpty(message = "NPSN tidak boleh kosong")
+    @Size(min = 8, max = 8, message = "NPSN harus sepanjang 8 karakter")
     private String npsn;
 
     @NotEmpty(message = "Nama sekolah tidak boleh kosong")

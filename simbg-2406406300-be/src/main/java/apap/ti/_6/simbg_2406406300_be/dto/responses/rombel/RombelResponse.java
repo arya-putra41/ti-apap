@@ -1,5 +1,8 @@
 package apap.ti._6.simbg_2406406300_be.dto.responses.rombel;
 
+import java.util.List;
+
+import apap.ti._6.simbg_2406406300_be.models.PenerimaManfaat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,4 +24,5 @@ public class RombelResponse {
     private int jumlahPenerimaTerdaftar;
     private int sisaKuota;
     private String status;
+    private List<PenerimaManfaat> penerima;
 }
