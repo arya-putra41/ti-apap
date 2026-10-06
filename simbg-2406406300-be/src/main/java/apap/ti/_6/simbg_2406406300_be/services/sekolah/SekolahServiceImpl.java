@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.services.sekolah;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,10 +9,12 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.CreateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnInexactLengthException;
+import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.RombelMasihAktifException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahIllegalChangeException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.SekolahRepository;
+import apap.ti._6.simbg_2406406300_be.services.rombel.RombelQueryService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
 import jakarta.transaction.Transactional;
 
@@ -20,10 +23,12 @@ import jakarta.transaction.Transactional;
 public class SekolahServiceImpl implements SekolahService {
     
     private SekolahRepository sekolahRepository;
+    private RombelQueryService rombelQueryService;
     private IdGeneratorService idGenerator;
 
-    public SekolahServiceImpl(SekolahRepository sekolahRepository, IdGeneratorService idGenerator) {
+    public SekolahServiceImpl(SekolahRepository sekolahRepository, RombelQueryService rombelQueryService, IdGeneratorService idGenerator) {
         this.sekolahRepository = sekolahRepository;
+        this.rombelQueryService = rombelQueryService;
         this.idGenerator = idGenerator;
     }
 
@@ -64,6 +69,7 @@ public class SekolahServiceImpl implements SekolahService {
             .tanggalBergabung(request.getTanggalBergabung())
 
             .statusMitra("AKTIF")
+            .rombel(new ArrayList<>())
             .build();
 
         return sekolahRepository.save(newSekolah);
@@ -84,10 +90,14 @@ public class SekolahServiceImpl implements SekolahService {
     }
 
     @Override
-    public Sekolah deactivateSekolah(String id) {
+    public Sekolah deactivateSekolah(String id) throws SekolahNotFoundException, RombelMasihAktifException {
         Sekolah deactivated = findSekolahById(id);
 
-        // TODO: Setelah Rombel diimplementasikan, cek bahwa semua Rombel telah ditutup
+        // Cek bahwa semua rombel di sekolah tersebut sudah ditutup
+        boolean adaRombelMasihAktif = rombelQueryService.rombelAktifExistsBySekolahId(id);
+        if (adaRombelMasihAktif == true) {
+            throw new RombelMasihAktifException();
+        }
 
         deactivated.deactivate();
         return sekolahRepository.save(deactivated);

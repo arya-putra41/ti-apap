@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
+import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,4 +43,9 @@ public class RombonganBelajar extends BaseEntity {
 
     @Column(nullable = false)
     private String status;
+
+    public void updateFromRequest(UpdateRombelRequest request) {
+        this.kuotaPenerima = request.getKuotaPenerima();
+        this.status = request.getStatus();
+    }
 }

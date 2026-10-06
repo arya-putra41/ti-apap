@@ -1,4 +1,4 @@
-package apap.ti._6.simbg_2406406300_be.dto.responses;
+package apap.ti._6.simbg_2406406300_be.dto.responses.sekolah;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

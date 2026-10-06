@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,17 +11,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.CreateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
-import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahBasicResponse;
-import apap.ti._6.simbg_2406406300_be.dto.responses.SekolahResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahResponse;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahService;
 import jakarta.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping("/api/sekolah")
 public class SekolahController {
 
@@ -35,8 +35,8 @@ public class SekolahController {
     @GetMapping
     public ResponseEntity<BaseResponse<List<SekolahBasicResponse>>> findAllSekolah() {
         List<SekolahBasicResponse> result = sekolahService.findAll().stream()
-            .map(s -> s.toBasicResponse())
-            .toList();
+                .map(s -> s.toBasicResponse())
+                .toList();
 
         BaseResponse<List<SekolahBasicResponse>> response = BaseResponse.success(result);
 
@@ -53,17 +53,19 @@ public class SekolahController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BaseResponse<SekolahResponse>> createSekolah(@Valid @RequestBody CreateSekolahRequest request) {
+    public ResponseEntity<BaseResponse<SekolahResponse>> createSekolah(
+            @Valid @RequestBody CreateSekolahRequest request) {
         Sekolah resultSchool = sekolahService.createSekolah(request);
-        
+
         BaseResponse<SekolahResponse> response = BaseResponse.created(resultSchool.toResponse());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(response);
+                .body(response);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<BaseResponse<SekolahResponse>> updateSekolah(@Valid @RequestBody UpdateSekolahRequest request) {
+    public ResponseEntity<BaseResponse<SekolahResponse>> updateSekolah(
+            @Valid @RequestBody UpdateSekolahRequest request) {
         Sekolah updatedSchool = sekolahService.updateSekolah(request);
 
         BaseResponse<SekolahResponse> response = BaseResponse.success(updatedSchool.toResponse());
