@@ -1,16 +1,18 @@
 package apap.ti._6.simbg_2406406300_be.services.sekolah;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.CreateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.RombelStillActiveException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahIllegalChangeException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundException;
+import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.SekolahRepository;
 import apap.ti._6.simbg_2406406300_be.services.rombel.RombelQueryService;
@@ -65,7 +67,6 @@ public class SekolahServiceImpl implements SekolahService {
             .tanggalBergabung(request.getTanggalBergabung())
 
             .statusMitra("AKTIF")
-            .rombel(new ArrayList<>())
             .build();
 
         return sekolahRepository.save(newSekolah);
@@ -86,6 +87,13 @@ public class SekolahServiceImpl implements SekolahService {
     }
 
     @Override
+    public Sekolah addRombelToSekolah(String id, RombonganBelajar rombel) throws SekolahNotFoundException {
+        Sekolah findSekolah = findSekolahById(id);
+
+        return sekolahRepository.save(findSekolah);
+    }
+
+    @Override
     public Sekolah deactivateSekolah(String id) throws SekolahNotFoundException, RombelStillActiveException {
         Sekolah deactivated = findSekolahById(id);
 
@@ -97,5 +105,31 @@ public class SekolahServiceImpl implements SekolahService {
 
         deactivated.deactivate();
         return sekolahRepository.save(deactivated);
+    }
+
+    @Override
+    public SekolahResponse sekolahToResponse(Sekolah sekolah) {
+        List<RombelResponse> listOfRombel = rombelQueryService.findBySekolahId(sekolah.getId()).stream()
+            .map(rbl -> rombelQueryService.rombelToResponse(rbl))
+            .toList();
+
+        SekolahResponse response = SekolahResponse.builder()
+            .id(sekolah.getId())
+            .npsn(sekolah.getNpsn())
+            .namaSekolah(sekolah.getNamaSekolah())
+            .jenjang(sekolah.getJenjang())
+            .provinsi(sekolah.getProvinsi())
+            .kota(sekolah.getKota())
+            .kecamatan(sekolah.getKecamatan())
+            .desa(sekolah.getDesa())
+            .jalan(sekolah.getJalan())
+            .namaKepalaSekolah(sekolah.getNamaKepalaSekolah())
+            .teleponSekolah(sekolah.getTeleponSekolah())
+            .tanggalBergabung(sekolah.getTanggalBergabung())
+            .statusMitra(sekolah.getStatusMitra())
+            .rombel(listOfRombel)
+            .build();
+
+        return response;
     }
 }

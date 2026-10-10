@@ -45,7 +45,8 @@ public class SekolahController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<SekolahResponse>> findSekolahById(@PathVariable String id) {
-        SekolahResponse result = sekolahService.findSekolahById(id).toResponse();
+        Sekolah foundSekolah = sekolahService.findSekolahById(id);
+        SekolahResponse result = sekolahService.sekolahToResponse(foundSekolah);
 
         BaseResponse<SekolahResponse> response = BaseResponse.success(result);
 
@@ -55,9 +56,10 @@ public class SekolahController {
     @PostMapping("/create")
     public ResponseEntity<BaseResponse<SekolahResponse>> createSekolah(
             @Valid @RequestBody CreateSekolahRequest request) {
-        Sekolah resultSchool = sekolahService.createSekolah(request);
+        Sekolah createdSekolah = sekolahService.createSekolah(request);
+        SekolahResponse result = sekolahService.sekolahToResponse(createdSekolah);
 
-        BaseResponse<SekolahResponse> response = BaseResponse.created(resultSchool.toResponse());
+        BaseResponse<SekolahResponse> response = BaseResponse.created(result);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
@@ -66,18 +68,20 @@ public class SekolahController {
     @PutMapping("/update")
     public ResponseEntity<BaseResponse<SekolahResponse>> updateSekolah(
             @Valid @RequestBody UpdateSekolahRequest request) {
-        Sekolah updatedSchool = sekolahService.updateSekolah(request);
+        Sekolah updatedSekolah = sekolahService.updateSekolah(request);
+        SekolahResponse result = sekolahService.sekolahToResponse(updatedSekolah);
 
-        BaseResponse<SekolahResponse> response = BaseResponse.success(updatedSchool.toResponse());
+        BaseResponse<SekolahResponse> response = BaseResponse.success(result);
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}/nonaktifkan")
     public ResponseEntity<BaseResponse<SekolahResponse>> deactivateSekolah(@PathVariable String id) {
-        Sekolah deactivatedSchool = sekolahService.deactivateSekolah(id);
+        Sekolah deactivatedSekolah = sekolahService.deactivateSekolah(id);
+        SekolahResponse result = sekolahService.sekolahToResponse(deactivatedSekolah);
 
-        BaseResponse<SekolahResponse> response = BaseResponse.success(deactivatedSchool.toResponse());
+        BaseResponse<SekolahResponse> response = BaseResponse.success(result);
 
         return ResponseEntity.ok(response);
     }

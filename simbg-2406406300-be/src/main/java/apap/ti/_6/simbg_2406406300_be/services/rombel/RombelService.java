@@ -19,7 +19,7 @@ public interface RombelService {
 
     public RombonganBelajar createRombel(CreateRombelRequest request) throws SekolahNotFoundException, SekolahInactiveException;
 
-    public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException;
+    public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException, SekolahNotFoundException;
 
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException;
 }

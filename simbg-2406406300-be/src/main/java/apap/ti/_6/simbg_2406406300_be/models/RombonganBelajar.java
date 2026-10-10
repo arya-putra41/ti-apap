@@ -7,7 +7,9 @@ import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,8 +29,9 @@ public class RombonganBelajar extends BaseEntity {
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private String sekolahId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "sekolah_id")
+    private Sekolah sekolah;
 
     @Column(nullable = false)
     private String namaRombel;

@@ -58,7 +58,6 @@ public class Seeder implements CommandLineRunner {
                     .namaKepalaSekolah("Nao Toyama")
                     .teleponSekolah("0217775678")
                     .tanggalBergabung(LocalDate.of(2026, 7, 1))
-                    .rombel(new ArrayList<>())
                     .statusMitra("AKTIF")
                 .build();
             sekolahRepository.save(sd);
@@ -77,7 +76,6 @@ public class Seeder implements CommandLineRunner {
                     .namaKepalaSekolah("Saori Hayami")
                     .teleponSekolah("0211234567")
                     .tanggalBergabung(LocalDate.of(2026, 6, 2))
-                    .rombel(new ArrayList<>())
                     .statusMitra("AKTIF")
                 .build();
             sekolahRepository.save(smp);
@@ -96,7 +94,6 @@ public class Seeder implements CommandLineRunner {
                     .namaKepalaSekolah("Ayane Sakura")
                     .teleponSekolah("0214567890")
                     .tanggalBergabung(LocalDate.of(1991, 11, 20))
-                    .rombel(new ArrayList<>())
                     .statusMitra("AKTIF")
                 .build();
             sekolahRepository.save(sma);
@@ -128,7 +125,7 @@ public class Seeder implements CommandLineRunner {
                     for (int loopCount=1; loopCount<=3; loopCount++) {
                         RombonganBelajar newRombel = RombonganBelajar.builder()
                         .id(idGeneratorService.generateRombelId())
-                        .sekolahId(currentSekolah.getId())
+                        .sekolah(currentSekolah)
                         .namaRombel("Kelas " + loopCount)
                         .tingkat(loopCount)
                         .tahunAjaran("2026/2027")
@@ -138,9 +135,7 @@ public class Seeder implements CommandLineRunner {
                         .penerima(new ArrayList<>())
                         .build();
 
-                        listRombel.add(newRombel);
-                        currentSekolah.addRombel(newRombel);
-                    }
+                        listRombel.add(newRombel);                    }
                 }
 
                 rombelRepository.saveAll(listRombel);

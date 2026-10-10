@@ -16,19 +16,20 @@ import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundExceptio
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.RombelRepository;
-import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahQueryService;
+import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
+import jakarta.transaction.Transactional;
 
 @Service
 public class RombelServiceImpl implements RombelService {
 
     private RombelRepository rombelRepository;
-    private SekolahQueryService sekolahQueryService;
+    private SekolahService sekolahService;
     private IdGeneratorService idGeneratorService;
 
-    public RombelServiceImpl(RombelRepository rombelRepository, SekolahQueryService sekolahQueryService, IdGeneratorService idGeneratorService) {
+    public RombelServiceImpl(RombelRepository rombelRepository, SekolahService sekolahService, IdGeneratorService idGeneratorService) {
         this.rombelRepository = rombelRepository;
-        this.sekolahQueryService = sekolahQueryService;
+        this.sekolahService = sekolahService;
         this.idGeneratorService = idGeneratorService;
     }
 
@@ -44,10 +45,11 @@ public class RombelServiceImpl implements RombelService {
     }
 
     @Override
+    @Transactional
     public RombonganBelajar createRombel(CreateRombelRequest request)
             throws SekolahNotFoundException, SekolahInactiveException {
         // check sekolah ada (exception di throw oleh service sekolah)
-        Sekolah sekolah = sekolahQueryService.findSekolahById(request.getSekolahId());
+        Sekolah sekolah = sekolahService.findSekolahById(request.getSekolahId());
         
         boolean sekolahAktif = sekolah.getStatusMitra().equals("AKTIF");
         if (sekolahAktif == false) {
@@ -56,7 +58,7 @@ public class RombelServiceImpl implements RombelService {
 
         RombonganBelajar newRombel = RombonganBelajar.builder()
             .id(idGeneratorService.generateRombelId())
-            .sekolahId(request.getSekolahId())
+            .sekolah(sekolah)
             .namaRombel(request.getNamaRombel())
             .tingkat(request.getTingkat())
             .tahunAjaran(request.getTahunAjaran())
@@ -70,14 +72,15 @@ public class RombelServiceImpl implements RombelService {
     }
 
     @Override
-    public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException {
+    @Transactional
+    public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException, SekolahNotFoundException {
         // check rombel ada (exception di throw oleh method)
         RombonganBelajar rombel = findRombelById(request.getId());
 
         // business requirements check
         if (request.getKuotaPenerima() < rombel.getJumlahPenerimaTerdaftar()) {
             throw new KuotaTooLowException(request.getKuotaPenerima(), rombel.getJumlahPenerimaTerdaftar());
-        } else if (request.getStatus() == "AKTIF" && rombel.getStatus() != "AKTIF") {
+        } else if (request.getStatus().equalsIgnoreCase("AKTIF") && !rombel.getStatus().equalsIgnoreCase("AKTIF")) {
             throw new RombelIllegalChangeStatusException(request.getId());
         }
 
@@ -89,11 +92,11 @@ public class RombelServiceImpl implements RombelService {
     
     @Override
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException {
-        Sekolah sekolahPemilikRombel = sekolahQueryService.findSekolahById(rombel.getSekolahId());
+        Sekolah sekolahPemilikRombel = rombel.getSekolah();
 
         RombelResponse response = RombelResponse.builder()
             .id(rombel.getId())
-            .sekolahId(rombel.getSekolahId())
+            .sekolahId(sekolahPemilikRombel.getId())
             .namaRombel(rombel.getNamaRombel())
             .tingkat(rombel.getTingkat())
             .tahunAjaran(rombel.getTahunAjaran())

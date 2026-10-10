@@ -1,17 +1,13 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahBasicResponse;
-import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahResponse;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,10 +62,6 @@ public class Sekolah extends BaseEntity {
     @Column(nullable = false)
     private String statusMitra;
 
-    @OneToMany
-    @JoinTable(name = "sekolah_rombel")
-    private List<RombonganBelajar> rombel;
-
     public void updateFromRequest(UpdateSekolahRequest request) {
         this.setNamaSekolah(request.getNamaSekolah());
         this.setJenjang(request.getJenjang());
@@ -81,27 +73,6 @@ public class Sekolah extends BaseEntity {
         this.setNamaKepalaSekolah(request.getNamaKepalaSekolah());
         this.setTeleponSekolah(request.getTeleponSekolah());
         this.setTanggalBergabung(request.getTanggalBergabung());
-    }
-
-    public SekolahResponse toResponse() {
-        SekolahResponse response = SekolahResponse.builder()
-            .id(id)
-            .npsn(npsn)
-            .namaSekolah(namaSekolah)
-            .jenjang(jenjang)
-            .provinsi(provinsi)
-            .kota(kota)
-            .kecamatan(kecamatan)
-            .desa(desa)
-            .jalan(jalan)
-            .namaKepalaSekolah(namaKepalaSekolah)
-            .teleponSekolah(teleponSekolah)
-            .tanggalBergabung(tanggalBergabung)
-            .statusMitra(statusMitra)
-            .rombel(rombel)
-            .build();
-
-        return response;
     }
 
     public SekolahBasicResponse toBasicResponse() {
@@ -118,9 +89,5 @@ public class Sekolah extends BaseEntity {
 
     public void deactivate() {
         this.statusMitra = "NONAKTIF";
-    }
-
-    public void addRombel(RombonganBelajar newRombel) {
-        this.rombel.add(newRombel);
     }
 }
