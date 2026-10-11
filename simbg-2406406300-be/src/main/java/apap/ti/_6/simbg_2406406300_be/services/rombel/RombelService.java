@@ -21,5 +21,9 @@ public interface RombelService {
 
     public RombonganBelajar updateRombel(UpdateRombelRequest request) throws RombelNotFoundException, KuotaTooLowException, RombelIllegalChangeStatusException, SekolahNotFoundException;
 
+    public void addPenerima(String rombelId) throws RombelNotFoundException;
+
+    public void removePenerima(String rombelId) throws RombelNotFoundException;
+
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException;
 }

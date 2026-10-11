@@ -89,6 +89,20 @@ public class RombelServiceImpl implements RombelService {
         rombel.updateFromRequest(request);
         return rombelRepository.save(rombel);
     }
+
+    @Override
+    public void addPenerima(String rombelId) throws RombelNotFoundException {
+        RombonganBelajar rombel = findRombelById(rombelId);
+        rombel.setJumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar() + 1);
+        rombelRepository.save(rombel);
+    }
+
+    @Override
+    public void removePenerima(String rombelId) throws RombelNotFoundException {
+        RombonganBelajar rombel = findRombelById(rombelId);
+        rombel.setJumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar() - 1);
+        rombelRepository.save(rombel);
+    }
     
     @Override
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException {

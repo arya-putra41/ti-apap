@@ -1,8 +1,10 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaRequest;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,11 +53,47 @@ public class PenerimaManfaat extends BaseEntity {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
-    private String petugasVerifikasiId;
+    @ManyToOne
+    @JoinColumn(name = "petugas_verifikasi_id")
+    private PetugasVerifikasi petugasVerifikasi;
 
     @Column(nullable = false)
     private ZonedDateTime tanggalPengajuan;
 
     private ZonedDateTime tanggalVerifikasi;
+
+    public void updateFromRequest(UpdatePenerimaRequest request) {
+        this.setNama(request.getNama());
+        this.setJenisKelamin(request.getJenisKelamin());
+        this.setTanggalLahir(request.getTanggalLahir());
+        this.setKondisiKhusus(request.getKondisiKhusus());
+        this.setKeterangan(request.getKeterangan());
+
+        if ("AKTIF".equalsIgnoreCase(status)) {
+            this.setStatus("DIAJUKAN");
+        }
+    }
+
+    public void verify(PetugasVerifikasi petugas) {
+        this.setPetugasVerifikasi(petugas);
+        this.setTanggalVerifikasi(ZonedDateTime.now(ZoneId.of("UTC+07:00")));
+        this.setStatus("TERVERIFIKASI");
+    }
+
+    public void review() {
+        this.setTanggalPengajuan(ZonedDateTime.now(ZoneId.of("UTC+07:00")));
+        this.setStatus("DIAJUKAN");
+    }
+
+    public void activate() {
+        this.setStatus("AKTIF");
+    }
+
+    public void reject() {
+        this.setStatus("DITOLAK");
+    }
+
+    public void deactivate() {
+        this.setStatus("NONAKTIF");
+    }
 }

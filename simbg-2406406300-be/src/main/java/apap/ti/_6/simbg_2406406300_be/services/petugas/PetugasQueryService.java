@@ -6,7 +6,7 @@ import apap.ti._6.simbg_2406406300_be.exceptions.petugas.PetugasNotFoundExceptio
 import apap.ti._6.simbg_2406406300_be.models.PetugasVerifikasi;
 
 public interface PetugasQueryService {
-    public List<PetugasVerifikasi> findAll();
+    List<PetugasVerifikasi> findAll();
 
-    public PetugasVerifikasi findById(String id) throws PetugasNotFoundException;
+    PetugasVerifikasi findPetugasById(String id) throws PetugasNotFoundException;
 }

@@ -9,7 +9,7 @@ import apap.ti._6.simbg_2406406300_be.models.PetugasVerifikasi;
 import apap.ti._6.simbg_2406406300_be.repo.PetugasRepository;
 
 @Service
-public class PetugasQueryServiceImpl {
+public class PetugasQueryServiceImpl implements PetugasQueryService {
     
     private PetugasRepository petugasRepository;
 
@@ -17,11 +17,13 @@ public class PetugasQueryServiceImpl {
         this.petugasRepository = petugasRepository;
     }
 
+    @Override
     public List<PetugasVerifikasi> findAll() {
         return petugasRepository.findAll();
     }
 
-    public PetugasVerifikasi findById(String id) throws PetugasNotFoundException {
+    @Override
+    public PetugasVerifikasi findPetugasById(String id) throws PetugasNotFoundException {
         return petugasRepository.findById(id)
                 .orElseThrow(() -> new PetugasNotFoundException(id));
     }

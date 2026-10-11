@@ -17,14 +17,15 @@ import apap.ti._6.simbg_2406406300_be.exceptions.penerima.PenerimaWrongStatusExc
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.RombelInactiveException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.RombelQuotaEmptyException;
 import apap.ti._6.simbg_2406406300_be.exceptions.petugas.PetugasNotFoundException;
+import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.PenerimaManfaat;
 
 public interface PenerimaService {
     public List<PenerimaManfaat> findAll();
 
-    public PenerimaManfaat findById(String id) throws PenerimaNotFoundException;
+    public PenerimaManfaat findPenerimaById(String id) throws PenerimaNotFoundException;
 
-    public PenerimaManfaat createPenerima(CreatePenerimaRequest request) throws NisnExistsException, KeteranganIllegalForKondisiException, RombelQuotaEmptyException, RombelInactiveException;
+    public PenerimaManfaat createPenerima(CreatePenerimaRequest request) throws NisnExistsException, KeteranganIllegalForKondisiException, RombelNotFoundException, RombelQuotaEmptyException, RombelInactiveException;
 
     public PenerimaManfaat updatePenerima(UpdatePenerimaRequest request) throws PenerimaNotFoundException, PenerimaIllegalChangeNisnException, KeteranganIllegalForKondisiException, PenerimaNoLongerChangeableException;
 
