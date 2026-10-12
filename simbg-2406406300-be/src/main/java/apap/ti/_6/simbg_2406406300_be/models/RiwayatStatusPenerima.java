@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +25,9 @@ public class RiwayatStatusPenerima extends ReadOnlyEntity {
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private String penerimaId;
+    @ManyToOne
+    @JoinColumn(name = "penerima_id")
+    private PenerimaManfaat penerima;
 
     private String statusSebelumnya;
 

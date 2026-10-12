@@ -8,6 +8,7 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.RejectPenerimaReques
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.ReviewPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.KeteranganIllegalForKondisiException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.NisnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.PenerimaIllegalChangeNisnException;
@@ -38,6 +39,8 @@ public interface PenerimaService {
     public PenerimaManfaat deactivatePenerima(DeactivatePenerimaRequest request) throws PenerimaNotFoundException, PenerimaWrongStatusException;
 
     public PenerimaManfaat reviewPenerima(ReviewPenerimaRequest request) throws PenerimaNotFoundException, PenerimaWrongStatusException;
+
+    public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima);
 
     // TODO: verification queue, graphs
 }

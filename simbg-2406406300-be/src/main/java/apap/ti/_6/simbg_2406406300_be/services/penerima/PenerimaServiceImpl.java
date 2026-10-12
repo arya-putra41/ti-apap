@@ -5,12 +5,15 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.CreatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.DeactivatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.RejectPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.ReviewPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.KeteranganIllegalForKondisiException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.NisnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.PenerimaIllegalChangeNisnException;
@@ -26,24 +29,27 @@ import apap.ti._6.simbg_2406406300_be.models.PetugasVerifikasi;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.repo.PenerimaRepository;
 import apap.ti._6.simbg_2406406300_be.services.petugas.PetugasQueryService;
+import apap.ti._6.simbg_2406406300_be.services.riwayat.RiwayatService;
 import apap.ti._6.simbg_2406406300_be.services.rombel.RombelService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
 
 
 // TODO: Implement RiwayatStatusPenerima, and write to DB if change occurs
 
-
+@Service
 public class PenerimaServiceImpl implements PenerimaService {
 
     private PenerimaRepository penerimaRepository;
     private RombelService rombelService;
     private PetugasQueryService petugasQueryService;
+    private RiwayatService riwayatService;
     private IdGeneratorService idGeneratorService;
 
-    public PenerimaServiceImpl(PenerimaRepository penerimaRepository, RombelService rombelService, PetugasQueryService petugasQueryService, IdGeneratorService idGeneratorService) {
+    public PenerimaServiceImpl(PenerimaRepository penerimaRepository, RombelService rombelService, PetugasQueryService petugasQueryService, RiwayatService riwayatService, IdGeneratorService idGeneratorService) {
         this.penerimaRepository = penerimaRepository;
         this.rombelService = rombelService;
         this.petugasQueryService = petugasQueryService;
+        this.riwayatService = riwayatService;
         this.idGeneratorService = idGeneratorService;
     }
 
@@ -98,8 +104,13 @@ public class PenerimaServiceImpl implements PenerimaService {
             .tanggalPengajuan(ZonedDateTime.now(ZoneId.of("UTC+07:00")))
             .build();
 
+
         rombelService.addPenerima(request.getRombelId());
-        return penerimaRepository.save(created);
+        
+        PenerimaManfaat saved = penerimaRepository.save(created);
+        riwayatService.createRiwayat(saved, null, "DIAJUKAN", null);
+
+        return saved;
     }
 
     @Override
@@ -108,11 +119,12 @@ public class PenerimaServiceImpl implements PenerimaService {
             PenerimaNoLongerChangeableException {
         // find penerima, service throws exception if not found
         PenerimaManfaat updated = findPenerimaById(request.getId());
+        String beforeStatus = updated.getStatus();
 
         // check status, if DITOLAK or NONAKTIF then throw exception (no longer changeable)
         List<String> invalidStatuses = Arrays.asList("DITOLAK", "NONAKTIF");
         for (String invalidStatus : invalidStatuses) {
-            if (updated.getStatus().equalsIgnoreCase(invalidStatus)) {
+            if (beforeStatus.equalsIgnoreCase(invalidStatus)) {
                 throw new PenerimaNoLongerChangeableException(invalidStatus);
             }
         }
@@ -128,11 +140,16 @@ public class PenerimaServiceImpl implements PenerimaService {
         updated.updateFromRequest(request);
 
         // check status again: if from "AKTIF" then review
-        if (updated.getStatus().equalsIgnoreCase("AKTIF")) {
+        if (beforeStatus.equalsIgnoreCase("AKTIF")) {
             updated.review();
         }
         
-        return penerimaRepository.save(updated);
+        PenerimaManfaat saved = penerimaRepository.save(updated);
+        if (beforeStatus.equalsIgnoreCase("AKTIF")) {
+            riwayatService.createRiwayat(saved, "AKTIF", "DIAJUKAN", "Data diubah saat aktif, perlu verifikasi ulang");
+        } 
+
+        return saved;
     }
 
     @Override
@@ -148,7 +165,9 @@ public class PenerimaServiceImpl implements PenerimaService {
         }
 
         penerima.verify(petugas);
-        return penerimaRepository.save(penerima);
+        PenerimaManfaat saved = penerimaRepository.save(penerima);
+        riwayatService.createRiwayat(saved, "DIAJUKAN", "TERVERIFIKASI", request.getCatatan());
+        return saved;
     }
 
     @Override
@@ -161,21 +180,28 @@ public class PenerimaServiceImpl implements PenerimaService {
         }
 
         penerima.activate();
-        return penerimaRepository.save(penerima);
+        PenerimaManfaat saved = penerimaRepository.save(penerima);
+        riwayatService.createRiwayat(saved, "TERVERIFIKASI", "AKTIF", null);
+        return saved;
     }
 
     @Override
     public PenerimaManfaat rejectPenerima(RejectPenerimaRequest request)
             throws PenerimaNotFoundException, PenerimaWrongStatusException {
         PenerimaManfaat penerima = findPenerimaById(request.getId());
+        String beforeStatus = penerima.getStatus();
 
         // check status of penerima, throw exception if incorrect
-        if (!penerima.getStatus().equalsIgnoreCase("DIAJUKAN") && !penerima.getStatus().equalsIgnoreCase("TERVERIFIKASI")) {
+        if (!beforeStatus.equalsIgnoreCase("DIAJUKAN") && !beforeStatus.equalsIgnoreCase("TERVERIFIKASI")) {
             throw new PenerimaWrongStatusException("Penolakan", "DIAJUKAN atau TERVERIFIKASI");
         }
 
-        penerima.activate();
-        return penerimaRepository.save(penerima);
+        rombelService.removePenerima(penerima.getRombel().getId());
+        penerima.reject();
+
+        PenerimaManfaat saved = penerimaRepository.save(penerima);
+        riwayatService.createRiwayat(saved, beforeStatus, "DITOLAK", request.getAlasan());
+        return saved;
     }
 
     @Override
@@ -190,8 +216,10 @@ public class PenerimaServiceImpl implements PenerimaService {
 
         rombelService.removePenerima(penerima.getRombel().getId());
         penerima.deactivate();
-        return penerimaRepository.save(penerima);
 
+        PenerimaManfaat saved = penerimaRepository.save(penerima);
+        riwayatService.createRiwayat(saved, "AKTIF", "NONAKTIF", request.getAlasan());
+        return saved;
     }
 
     @Override
@@ -204,8 +232,37 @@ public class PenerimaServiceImpl implements PenerimaService {
             throw new PenerimaWrongStatusException("Tinjau ulang", "TERVERIFIKASI");
         }
 
+        rombelService.removePenerima(penerima.getRombel().getId());
         penerima.review();
-        return penerimaRepository.save(penerima);
+
+        PenerimaManfaat saved = penerimaRepository.save(penerima);
+        riwayatService.createRiwayat(saved, "TERVERIFIKASI", "DIAJUKAN", request.getAlasan());
+        return saved;
     }
     
+    @Override
+    public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima) {
+        PenerimaResponse response = PenerimaResponse.builder()
+            .id(penerima.getId())
+            .nama(penerima.getNama())
+            .nisn(penerima.getNisn())
+            .rombelId(penerima.getRombel().getId())
+            .namaRombel(penerima.getRombel().getNamaRombel())
+            .namaSekolah(penerima.getRombel().getSekolah().getNamaSekolah())
+            .jenisKelamin(penerima.getJenisKelamin())
+            .kondisiKhusus(penerima.getKondisiKhusus())
+            .keterangan(penerima.getKeterangan())
+            .status(penerima.getStatus())
+            .tanggalPengajuan(penerima.getTanggalPengajuan())
+            .tanggalVerifikasi(penerima.getTanggalVerifikasi())
+            .petugasVerifikasi(penerima.getPetugasVerifikasi())
+            .createdAt(penerima.getCreatedAt())
+            .updatedAt(penerima.getUpdatedAt())
+
+            .riwayat(riwayatService.findRiwayatByPenerimaId(penerima.getId()))
+            .tanggalAktivasi(riwayatService.findTanggalAktivasiOfPenerima(penerima.getId()))
+            .build();
+
+        return response;
+    }
 }
