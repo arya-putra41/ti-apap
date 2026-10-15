@@ -44,7 +44,7 @@ public class Seeder implements CommandLineRunner {
         Faker faker = new Faker();
         Random rng = new Random();
 
-        // Ciptakan sekolah
+        // Create sekolah
         if (sekolahService.findAll().isEmpty()) {
             CreateSekolahRequest sd = CreateSekolahRequest.builder()
                 .npsn("20210123")
@@ -95,7 +95,7 @@ public class Seeder implements CommandLineRunner {
             sekolahService.createSekolah(sma);
         }
 
-        // Ciptakan petugas
+        // Create petugas
         String[] daerahTugas = {"Depok", "Surabaya", "Tangerang Selatan"};
         if (petugasRepository.count() == 0) {
             for (int index = 0; index < 10; index++) {
@@ -112,7 +112,7 @@ public class Seeder implements CommandLineRunner {
             }
         }
 
-        // Ciptakan rombel
+        // Create rombel
         List<Sekolah> schoolList = sekolahService.findAll();
         if (rombelService.findAll().size() == 0) {
             if (!schoolList.isEmpty()) {
@@ -132,12 +132,13 @@ public class Seeder implements CommandLineRunner {
             }
         }
 
-        // Ciptakan penerima
+        // Create penerima
         List<RombonganBelajar> rombelList = rombelService.findAll();
         if (penerimaService.findAll().size() == 0) {
             if (!rombelList.isEmpty()) {
                 for (RombonganBelajar rombel : rombelList) {
                     for (int loopCount = 1; loopCount <= 3; loopCount++) {
+                        // 1 in 6 chance of having special conditions
                         boolean punyaKondisi = rng.nextInt(6) == 5;
 
                         CreatePenerimaRequest newPenerima = CreatePenerimaRequest.builder()

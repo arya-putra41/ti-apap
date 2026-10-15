@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.riwayat.RiwayatResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.PenerimaNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.PenerimaManfaat;
 import apap.ti._6.simbg_2406406300_be.repo.PenerimaRepository;
@@ -39,6 +40,10 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
 
     @Override
     public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima) {
+        List<RiwayatResponse> listRiwayat = riwayatService.findRiwayatByPenerimaId(penerima.getId()).stream()
+            .map(riwayat -> riwayat.toResponse())
+            .toList();
+
         PenerimaResponse response = PenerimaResponse.builder()
             .id(penerima.getId())
             .nama(penerima.getNama())
@@ -53,7 +58,7 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
             .tanggalVerifikasi(penerima.getTanggalVerifikasi())
             .petugasVerifikasi(penerima.getPetugasVerifikasi())
 
-            .riwayat(riwayatService.findRiwayatByPenerimaId(penerima.getId()))
+            .riwayat(listRiwayat)
             .build();
 
         return response;

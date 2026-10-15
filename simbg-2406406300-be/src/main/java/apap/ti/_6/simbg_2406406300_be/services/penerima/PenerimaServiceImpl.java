@@ -14,6 +14,7 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.ReviewPenerimaReques
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.riwayat.RiwayatResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.KeteranganIllegalForKondisiException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.NisnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.penerima.PenerimaIllegalChangeNisnException;
@@ -33,9 +34,6 @@ import apap.ti._6.simbg_2406406300_be.services.riwayat.RiwayatService;
 import apap.ti._6.simbg_2406406300_be.services.rombel.RombelService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
 import jakarta.transaction.Transactional;
-
-
-// TODO: Implement RiwayatStatusPenerima, and write to DB if change occurs
 
 @Service
 public class PenerimaServiceImpl implements PenerimaService {
@@ -245,6 +243,10 @@ public class PenerimaServiceImpl implements PenerimaService {
     
     @Override
     public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima) {
+        List<RiwayatResponse> listRiwayat = riwayatService.findRiwayatByPenerimaId(penerima.getId()).stream()
+            .map(riwayat -> riwayat.toResponse())
+            .toList();
+
         PenerimaResponse response = PenerimaResponse.builder()
             .id(penerima.getId())
             .nama(penerima.getNama())
@@ -259,7 +261,7 @@ public class PenerimaServiceImpl implements PenerimaService {
             .tanggalVerifikasi(penerima.getTanggalVerifikasi())
             .petugasVerifikasi(penerima.getPetugasVerifikasi())
 
-            .riwayat(riwayatService.findRiwayatByPenerimaId(penerima.getId()))
+            .riwayat(listRiwayat)
             .build();
 
         return response;

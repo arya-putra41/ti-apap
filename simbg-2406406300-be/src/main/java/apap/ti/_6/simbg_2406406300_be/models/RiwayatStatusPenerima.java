@@ -2,6 +2,7 @@ package apap.ti._6.simbg_2406406300_be.models;
 
 import java.time.ZonedDateTime;
 
+import apap.ti._6.simbg_2406406300_be.dto.responses.riwayat.RiwayatResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -39,4 +40,16 @@ public class RiwayatStatusPenerima extends ReadOnlyEntity {
 
     @Column(nullable = false)
     private String keterangan;
+
+    public RiwayatResponse toResponse() {
+        RiwayatResponse response = RiwayatResponse.builder()
+            .id(id)
+            .statusSebelumnya(statusSebelumnya)
+            .statusBaru(statusBaru)
+            .tanggalPerubahan(tanggalPerubahan)
+            .keterangan(keterangan)
+            .build();
+
+        return response;
+    }
 }

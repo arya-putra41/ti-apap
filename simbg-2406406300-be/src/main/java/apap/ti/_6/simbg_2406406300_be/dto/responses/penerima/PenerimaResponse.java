@@ -3,8 +3,8 @@ package apap.ti._6.simbg_2406406300_be.dto.responses.penerima;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import apap.ti._6.simbg_2406406300_be.dto.responses.riwayat.RiwayatResponse;
 import apap.ti._6.simbg_2406406300_be.models.PetugasVerifikasi;
-import apap.ti._6.simbg_2406406300_be.models.RiwayatStatusPenerima;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +28,5 @@ public class PenerimaResponse {
     private ZonedDateTime tanggalVerifikasi;
     private PetugasVerifikasi petugasVerifikasi;
 
-    private List<RiwayatStatusPenerima> riwayat;
+    private List<RiwayatResponse> riwayat;
 }

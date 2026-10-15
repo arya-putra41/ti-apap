@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
-import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;

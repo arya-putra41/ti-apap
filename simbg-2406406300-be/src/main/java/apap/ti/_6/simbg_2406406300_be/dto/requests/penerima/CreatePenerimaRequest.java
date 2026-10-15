@@ -3,6 +3,7 @@ package apap.ti._6.simbg_2406406300_be.dto.requests.penerima;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class CreatePenerimaRequest {
     @NotEmpty(message = "Jenis kelamin siswa tidak boleh kosong")
     private String jenisKelamin;
 
-    @NotEmpty(message = "Tanggal lahir siswa tidak boleh kosong")
+    @NotNull(message = "Tanggal lahir siswa tidak boleh kosong")
     @PastOrPresent(message = "Tanggal lahir harus sudah terjadi")
     private LocalDate tanggalLahir;
 
