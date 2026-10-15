@@ -1,16 +1,12 @@
 package apap.ti._6.simbg_2406406300_be.models;
 
-import java.util.List;
-
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,10 +46,6 @@ public class RombonganBelajar extends BaseEntity {
 
     @Column(nullable = false)
     private String status;
-
-    @OneToMany
-    @JoinTable(name = "rombel_penerima")
-    private List<PenerimaManfaat> penerima;
 
     public void updateFromRequest(UpdateRombelRequest request) {
         this.kuotaPenerima = request.getKuotaPenerima();

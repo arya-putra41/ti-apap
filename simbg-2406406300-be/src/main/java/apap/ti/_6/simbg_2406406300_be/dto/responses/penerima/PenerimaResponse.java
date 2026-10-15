@@ -18,7 +18,6 @@ public class PenerimaResponse {
     private String id;
     private String nama;
     private String nisn;
-    private String rombelId;
     private String namaRombel;
     private String namaSekolah;
     private String jenisKelamin;
@@ -27,10 +26,7 @@ public class PenerimaResponse {
     private String status;
     private ZonedDateTime tanggalPengajuan;
     private ZonedDateTime tanggalVerifikasi;
-    private ZonedDateTime tanggalAktivasi;
     private PetugasVerifikasi petugasVerifikasi;
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
 
     private List<RiwayatStatusPenerima> riwayat;
 }

@@ -1,12 +1,13 @@
 package apap.ti._6.simbg_2406406300_be.services.rombel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.CreateRombelRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.KuotaTooLowException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelIllegalChangeStatusException;
@@ -16,6 +17,7 @@ import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundExceptio
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.RombelRepository;
+import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaQueryService;
 import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
 import jakarta.transaction.Transactional;
@@ -25,11 +27,13 @@ public class RombelServiceImpl implements RombelService {
 
     private RombelRepository rombelRepository;
     private SekolahService sekolahService;
+    private PenerimaQueryService penerimaQueryService;
     private IdGeneratorService idGeneratorService;
 
-    public RombelServiceImpl(RombelRepository rombelRepository, SekolahService sekolahService, IdGeneratorService idGeneratorService) {
+    public RombelServiceImpl(RombelRepository rombelRepository, SekolahService sekolahService, PenerimaQueryService penerimaQueryService, IdGeneratorService idGeneratorService) {
         this.rombelRepository = rombelRepository;
         this.sekolahService = sekolahService;
+        this.penerimaQueryService = penerimaQueryService;
         this.idGeneratorService = idGeneratorService;
     }
 
@@ -64,7 +68,6 @@ public class RombelServiceImpl implements RombelService {
             .tahunAjaran(request.getTahunAjaran())
             .kuotaPenerima(request.getKuotaPenerima())
             .jumlahPenerimaTerdaftar(0)
-            .penerima(new ArrayList<>())
             .status("AKTIF")
         .build();
 
@@ -108,6 +111,10 @@ public class RombelServiceImpl implements RombelService {
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException {
         Sekolah sekolahPemilikRombel = rombel.getSekolah();
 
+        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findPenerimaByRombelId(rombel.getId()).stream()
+            .map(penerima -> penerima.toBasicResponse())
+            .toList();
+
         RombelResponse response = RombelResponse.builder()
             .id(rombel.getId())
             .sekolahId(sekolahPemilikRombel.getId())
@@ -118,7 +125,7 @@ public class RombelServiceImpl implements RombelService {
             .jumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar())
             .sisaKuota(rombel.getKuotaPenerima() - rombel.getJumlahPenerimaTerdaftar())
             .status(rombel.getStatus())
-            .penerima(rombel.getPenerima())
+            .penerima(listPenerima)
 
             .namaSekolah(sekolahPemilikRombel.getNamaSekolah())
 

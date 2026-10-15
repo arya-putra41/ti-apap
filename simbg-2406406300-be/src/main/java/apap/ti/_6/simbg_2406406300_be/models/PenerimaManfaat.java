@@ -30,7 +30,7 @@ public class PenerimaManfaat extends BaseEntity {
     @Id
     private String id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "rombel_id")
     private RombonganBelajar rombel;
 
@@ -48,7 +48,7 @@ public class PenerimaManfaat extends BaseEntity {
 
     @Column(nullable = false)
     private String kondisiKhusus;
-
+    
     private String keterangan;
 
     @Column(nullable = false)

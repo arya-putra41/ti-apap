@@ -32,6 +32,7 @@ import apap.ti._6.simbg_2406406300_be.services.petugas.PetugasQueryService;
 import apap.ti._6.simbg_2406406300_be.services.riwayat.RiwayatService;
 import apap.ti._6.simbg_2406406300_be.services.rombel.RombelService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
+import jakarta.transaction.Transactional;
 
 
 // TODO: Implement RiwayatStatusPenerima, and write to DB if change occurs
@@ -65,6 +66,7 @@ public class PenerimaServiceImpl implements PenerimaService {
     }
 
     @Override
+    @Transactional
     public PenerimaManfaat createPenerima(CreatePenerimaRequest request) throws NisnExistsException,
             KeteranganIllegalForKondisiException, RombelNotFoundException, RombelQuotaEmptyException, RombelInactiveException {
         // check if NISN is already in database
@@ -75,7 +77,7 @@ public class PenerimaServiceImpl implements PenerimaService {
         }
 
         // check if keterangan exists for condition
-        if (request.getKeterangan().isBlank()) {
+        if (request.getKeterangan() == null || request.getKeterangan().isBlank()) {
             if (!request.getKondisiKhusus().equalsIgnoreCase("TIDAK_ADA")) {
                 throw new KeteranganIllegalForKondisiException();
             }
@@ -101,6 +103,7 @@ public class PenerimaServiceImpl implements PenerimaService {
             .keterangan(request.getKeterangan())
 
             .rombel(ownerRombel)
+            .status("DIAJUKAN")
             .tanggalPengajuan(ZonedDateTime.now(ZoneId.of("UTC+07:00")))
             .build();
 
@@ -108,7 +111,7 @@ public class PenerimaServiceImpl implements PenerimaService {
         rombelService.addPenerima(request.getRombelId());
         
         PenerimaManfaat saved = penerimaRepository.save(created);
-        riwayatService.createRiwayat(saved, null, "DIAJUKAN", null);
+        riwayatService.createRiwayat(saved, null, "DIAJUKAN", "Pengajuan dibuat");
 
         return saved;
     }
@@ -130,7 +133,7 @@ public class PenerimaServiceImpl implements PenerimaService {
         }
 
         // check keterangan, if empty when kondisi khusus is not empty then throw exception (illegal keterangan)
-        if (request.getKeterangan().isBlank()) {
+        if (request.getKeterangan() == null || request.getKeterangan().isBlank()) {
             if (!request.getKondisiKhusus().equalsIgnoreCase("TIDAK_ADA")) {
                 throw new KeteranganIllegalForKondisiException();
             }
@@ -181,7 +184,7 @@ public class PenerimaServiceImpl implements PenerimaService {
 
         penerima.activate();
         PenerimaManfaat saved = penerimaRepository.save(penerima);
-        riwayatService.createRiwayat(saved, "TERVERIFIKASI", "AKTIF", null);
+        riwayatService.createRiwayat(saved, "TERVERIFIKASI", "AKTIF", "Penerima Diaktivasi");
         return saved;
     }
 
@@ -246,7 +249,6 @@ public class PenerimaServiceImpl implements PenerimaService {
             .id(penerima.getId())
             .nama(penerima.getNama())
             .nisn(penerima.getNisn())
-            .rombelId(penerima.getRombel().getId())
             .namaRombel(penerima.getRombel().getNamaRombel())
             .namaSekolah(penerima.getRombel().getSekolah().getNamaSekolah())
             .jenisKelamin(penerima.getJenisKelamin())
@@ -256,11 +258,8 @@ public class PenerimaServiceImpl implements PenerimaService {
             .tanggalPengajuan(penerima.getTanggalPengajuan())
             .tanggalVerifikasi(penerima.getTanggalVerifikasi())
             .petugasVerifikasi(penerima.getPetugasVerifikasi())
-            .createdAt(penerima.getCreatedAt())
-            .updatedAt(penerima.getUpdatedAt())
 
             .riwayat(riwayatService.findRiwayatByPenerimaId(penerima.getId()))
-            .tanggalAktivasi(riwayatService.findTanggalAktivasiOfPenerima(penerima.getId()))
             .build();
 
         return response;

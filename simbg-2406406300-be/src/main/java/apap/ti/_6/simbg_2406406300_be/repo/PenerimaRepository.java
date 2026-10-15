@@ -8,4 +8,6 @@ import apap.ti._6.simbg_2406406300_be.models.PenerimaManfaat;
 
 public interface PenerimaRepository extends JpaRepository<PenerimaManfaat, String> {
     boolean existsByNisnAndStatusInIgnoreCase(String nisn, List<String> statuses);
+
+    List<PenerimaManfaat> findByRombelId(String rombelId);
 }

@@ -4,19 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelNotFoundException;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.RombelRepository;
+import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaQueryService;
 
 @Service
 public class RombelQueryServiceImpl implements RombelQueryService {
 
     private RombelRepository rombelRepository;
+    private PenerimaQueryService penerimaQueryService;
 
-    public RombelQueryServiceImpl(RombelRepository rombelRepository) {
+    public RombelQueryServiceImpl(RombelRepository rombelRepository, PenerimaQueryService penerimaQueryService) {
         this.rombelRepository = rombelRepository;
+        this.penerimaQueryService = penerimaQueryService;
     }
 
     @Override
@@ -44,6 +49,10 @@ public class RombelQueryServiceImpl implements RombelQueryService {
     public RombelResponse rombelToResponse(RombonganBelajar rombel) {
         Sekolah sekolahPemilikRombel = rombel.getSekolah();
 
+        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findPenerimaByRombelId(rombel.getId()).stream()
+            .map(penerima -> penerima.toBasicResponse())
+            .toList();
+
         RombelResponse response = RombelResponse.builder()
             .id(rombel.getId())
             .sekolahId(sekolahPemilikRombel.getId())
@@ -54,7 +63,7 @@ public class RombelQueryServiceImpl implements RombelQueryService {
             .jumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar())
             .sisaKuota(rombel.getKuotaPenerima() - rombel.getJumlahPenerimaTerdaftar())
             .status(rombel.getStatus())
-            .penerima(rombel.getPenerima())
+            .penerima(listPenerima)
 
             .namaSekolah(sekolahPemilikRombel.getNamaSekolah())
 
