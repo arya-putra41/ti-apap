@@ -39,6 +39,16 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
     }
 
     @Override
+    public int countAllActivePenerima() {
+        return penerimaRepository.countByStatus("AKTIF");
+    }
+
+    @Override
+    public int countAllPenerimaAwaitingVerification() {
+        return penerimaRepository.countByStatus("DIAJUKAN");
+    }
+
+    @Override
     public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima) {
         List<RiwayatResponse> listRiwayat = riwayatService.findRiwayatByPenerimaId(penerima.getId()).stream()
             .map(riwayat -> riwayat.toResponse())

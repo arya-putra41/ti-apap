@@ -6,4 +6,6 @@ import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 
 public interface SekolahRepository extends JpaRepository<Sekolah, String> {
     boolean existsByNpsn(String npsn);
+
+    int countByStatusMitra(String status);
 }

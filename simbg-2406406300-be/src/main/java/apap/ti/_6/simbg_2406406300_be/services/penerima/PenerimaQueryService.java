@@ -13,5 +13,9 @@ public interface PenerimaQueryService {
 
     public List<PenerimaManfaat> findPenerimaByRombelId(String rombelId);
 
+    public int countAllActivePenerima();
+
+    public int countAllPenerimaAwaitingVerification();
+
     public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima);
 }

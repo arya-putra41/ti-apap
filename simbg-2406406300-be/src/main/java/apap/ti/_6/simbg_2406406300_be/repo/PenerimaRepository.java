@@ -10,4 +10,6 @@ public interface PenerimaRepository extends JpaRepository<PenerimaManfaat, Strin
     boolean existsByNisnAndStatusInIgnoreCase(String nisn, List<String> statuses);
 
     List<PenerimaManfaat> findByRombelId(String rombelId);
+
+    int countByStatus(String status);
 }

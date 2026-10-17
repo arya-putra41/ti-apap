@@ -45,6 +45,18 @@ public class RombelQueryServiceImpl implements RombelQueryService {
     }
 
     @Override
+    public int countAllActiveRombel() {
+        return rombelRepository.countByStatus("AKTIF");
+    }
+
+    @Override
+    public String getKuotaRombelTerpakai() {
+        double quota = rombelRepository.getKuotaTerpakai();
+        String rounded = String.format("%.2f", quota);
+        return rounded;
+    }
+
+    @Override
     public RombelResponse rombelToResponse(RombonganBelajar rombel) {
         Sekolah sekolahPemilikRombel = rombel.getSekolah();
 

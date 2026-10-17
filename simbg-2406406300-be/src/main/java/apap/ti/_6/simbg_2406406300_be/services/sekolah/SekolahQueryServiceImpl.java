@@ -25,4 +25,9 @@ public class SekolahQueryServiceImpl implements SekolahQueryService {
         return sekolahRepository.findById(id)
                 .orElseThrow(() -> new SekolahNotFoundException(id));
     }
+
+    @Override
+    public int countAllActiveSekolah() {
+        return sekolahRepository.countByStatusMitra("AKTIF");
+    }
 }

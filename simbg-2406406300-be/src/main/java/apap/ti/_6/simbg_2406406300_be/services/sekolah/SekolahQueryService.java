@@ -9,4 +9,6 @@ public interface SekolahQueryService {
     public List<Sekolah> findAll();
 
     public Sekolah findSekolahById(String id) throws SekolahNotFoundException;
+
+    public int countAllActiveSekolah();
 }

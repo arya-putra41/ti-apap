@@ -15,5 +15,9 @@ public interface RombelQueryService {
 
     public boolean rombelAktifExistsBySekolahId(String sekolahId);
 
+    public int countAllActiveRombel();
+
+    public String getKuotaRombelTerpakai();
+
     public RombelResponse rombelToResponse(RombonganBelajar rombel);
 }
