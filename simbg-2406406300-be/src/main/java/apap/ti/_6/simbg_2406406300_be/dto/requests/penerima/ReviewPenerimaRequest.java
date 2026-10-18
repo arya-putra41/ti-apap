@@ -14,6 +14,6 @@ public class ReviewPenerimaRequest {
     @NotEmpty(message = "ID penerima tidak boleh kosong")
     private String id;
 
-    @NotEmpty(message = "Alasan penonaktifan penerima tidak boleh kosong")
+    @NotEmpty(message = "Alasan peninjauan ulang penerima tidak boleh kosong")
     private String alasan;
 }
