@@ -55,3 +55,4 @@ export interface SekolahResponse {
     statusMitra: string
     rombel: RombelResponse[]
 }
+

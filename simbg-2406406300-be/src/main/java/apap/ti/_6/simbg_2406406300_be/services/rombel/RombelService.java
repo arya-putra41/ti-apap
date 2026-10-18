@@ -4,6 +4,7 @@ import java.util.List;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.CreateRombelRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.KuotaTooLowException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelIllegalChangeStatusException;
@@ -26,4 +27,6 @@ public interface RombelService {
     public void removePenerima(String rombelId) throws RombelNotFoundException;
 
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException;
+
+    public RombelBasicResponse rombelToBasicResponse(RombonganBelajar rombel) throws SekolahNotFoundException;
 }

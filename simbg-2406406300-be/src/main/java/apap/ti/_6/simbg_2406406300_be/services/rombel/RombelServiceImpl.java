@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.CreateRombelRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.KuotaTooLowException;
 import apap.ti._6.simbg_2406406300_be.exceptions.rombel.RombelIllegalChangeStatusException;
@@ -16,6 +17,7 @@ import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.SekolahNotFoundExceptio
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 import apap.ti._6.simbg_2406406300_be.repo.RombelRepository;
+import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaDeactivatorService;
 import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaQueryService;
 import apap.ti._6.simbg_2406406300_be.services.sekolah.SekolahService;
 import apap.ti._6.simbg_2406406300_be.utils.IdGeneratorService;
@@ -27,12 +29,14 @@ public class RombelServiceImpl implements RombelService {
     private RombelRepository rombelRepository;
     private SekolahService sekolahService;
     private PenerimaQueryService penerimaQueryService;
+    private PenerimaDeactivatorService penerimaDeactivatorService;
     private IdGeneratorService idGeneratorService;
 
-    public RombelServiceImpl(RombelRepository rombelRepository, SekolahService sekolahService, PenerimaQueryService penerimaQueryService, IdGeneratorService idGeneratorService) {
+    public RombelServiceImpl(RombelRepository rombelRepository, SekolahService sekolahService, PenerimaQueryService penerimaQueryService, PenerimaDeactivatorService penerimaDeactivatorService, IdGeneratorService idGeneratorService) {
         this.rombelRepository = rombelRepository;
         this.sekolahService = sekolahService;
         this.penerimaQueryService = penerimaQueryService;
+        this.penerimaDeactivatorService = penerimaDeactivatorService;
         this.idGeneratorService = idGeneratorService;
     }
 
@@ -86,7 +90,14 @@ public class RombelServiceImpl implements RombelService {
             throw new RombelIllegalChangeStatusException(request.getId());
         }
 
-        // TODO: setelah penerima implemented, jika rombel ditutup nonaktifkan semua penerima di rombel (cascading)
+        boolean statusLamaAktif = "AKTIF".equalsIgnoreCase(rombel.getStatus());
+        boolean statusBaruNonaktif = !"AKTIF".equalsIgnoreCase(request.getStatus());
+
+        if (statusLamaAktif && statusBaruNonaktif) {
+            penerimaDeactivatorService.deactivateAllPenerimaByRombelId(rombel.getId());
+
+            rombel.setJumlahPenerimaTerdaftar(0);
+        }
 
         rombel.updateFromRequest(request);
         return rombelRepository.save(rombel);
@@ -125,6 +136,28 @@ public class RombelServiceImpl implements RombelService {
             .sisaKuota(rombel.getKuotaPenerima() - rombel.getJumlahPenerimaTerdaftar())
             .status(rombel.getStatus())
             .penerima(listPenerima)
+
+            .namaSekolah(sekolahPemilikRombel.getNamaSekolah())
+
+            .build();
+
+        return response;
+    }
+
+    @Override
+    public RombelBasicResponse rombelToBasicResponse(RombonganBelajar rombel) throws SekolahNotFoundException {
+        Sekolah sekolahPemilikRombel = rombel.getSekolah();
+
+        RombelBasicResponse response = RombelBasicResponse.builder()
+            .id(rombel.getId())
+            .sekolahId(sekolahPemilikRombel.getId())
+            .namaRombel(rombel.getNamaRombel())
+            .tingkat(rombel.getTingkat())
+            .tahunAjaran(rombel.getTahunAjaran())
+            .kuotaPenerima(rombel.getKuotaPenerima())
+            .jumlahPenerimaTerdaftar(rombel.getJumlahPenerimaTerdaftar())
+            .sisaKuota(rombel.getKuotaPenerima() - rombel.getJumlahPenerimaTerdaftar())
+            .status(rombel.getStatus())
 
             .namaSekolah(sekolahPemilikRombel.getNamaSekolah())
 

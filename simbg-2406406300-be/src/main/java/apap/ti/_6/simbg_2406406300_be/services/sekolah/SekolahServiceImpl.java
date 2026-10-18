@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.CreateSekolahRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.sekolah.UpdateSekolahRequest;
-import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.sekolah.SekolahResponse;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.NpsnExistsException;
 import apap.ti._6.simbg_2406406300_be.exceptions.sekolah.RombelStillActiveException;
@@ -109,8 +109,8 @@ public class SekolahServiceImpl implements SekolahService {
 
     @Override
     public SekolahResponse sekolahToResponse(Sekolah sekolah) {
-        List<RombelResponse> listOfRombel = rombelQueryService.findBySekolahId(sekolah.getId()).stream()
-            .map(rbl -> rombelQueryService.rombelToResponse(rbl))
+        List<RombelBasicResponse> listOfRombel = rombelQueryService.findBySekolahId(sekolah.getId()).stream()
+            .map(rbl -> rombelQueryService.rombelToBasicResponse(rbl))
             .toList();
 
         SekolahResponse response = SekolahResponse.builder()

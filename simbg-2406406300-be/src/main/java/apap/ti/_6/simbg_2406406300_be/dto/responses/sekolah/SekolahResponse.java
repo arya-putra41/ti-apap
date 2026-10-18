@@ -3,7 +3,7 @@ package apap.ti._6.simbg_2406406300_be.dto.responses.sekolah;
 import java.time.LocalDate;
 import java.util.List;
 
-import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelBasicResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +28,5 @@ public class SekolahResponse {
     private String teleponSekolah;
     private LocalDate tanggalBergabung;
     private String statusMitra;
-    private List<RombelResponse> rombel;
+    private List<RombelBasicResponse> rombel;
 }
