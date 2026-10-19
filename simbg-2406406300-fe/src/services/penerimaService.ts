@@ -72,3 +72,11 @@ export interface ReviewPenerimaRequest {
     alasan: string
 }
 
+export const penerimaService = {
+    async findAll(): Promise<PenerimaBasicResponse[]> {
+        const response = await api.get<ApiResponse<PenerimaBasicResponse[]>>('/penerima')
+
+        return response.data.data
+    }
+}
+

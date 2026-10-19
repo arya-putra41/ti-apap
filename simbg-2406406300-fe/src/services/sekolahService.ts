@@ -56,3 +56,10 @@ export interface SekolahResponse {
     rombel: RombelResponse[]
 }
 
+export const sekolahService = {
+    async findAll(): Promise<SekolahBasicResponse[]> {
+        const response = await api.get<ApiResponse<SekolahBasicResponse[]>>('/sekolah')
+
+        return response.data.data
+    }
+}

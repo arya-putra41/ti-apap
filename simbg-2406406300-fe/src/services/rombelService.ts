@@ -29,3 +29,24 @@ export interface RombelResponse {
     status: string
     penerima: PenerimaBasicResponse[]
 }
+
+export interface RombelBasicResponse {
+    id: string
+    sekolahId: string
+    namaSekolah: string
+    namaRombel: string
+    tingkat: string
+    tahunAjaran: string
+    kuotaPenerima: number
+    jumlahPenerimaTerdaftar: number
+    sisaKuota: string
+    status: string
+}
+
+export const rombelService = {
+    async findAll(): Promise<RombelBasicResponse[]> {
+        const response = await api.get<ApiResponse<RombelBasicResponse[]>>('/rombel')
+
+        return response.data.data
+    }
+}

@@ -35,11 +35,22 @@ onMounted(loadHomeInfo)
       </h1>
       <p class="text-2xl">Sistem Informasi Makan Bergizi Gratis</p>
       <p class="text-lg">Modul 2: Sekolah dan Penerima Manfaat</p>
-      
+
       <!--Statistics-->
       <div class="flex flex-row mt-5">
-        <p v-if="loading">Memuat informasi...</p>
-        <p v-else-if="error">{{ error }}</p>
+        <div v-if="loading" class="flex flex-col items-center justify-center py-16 gap-3">
+          <div class="w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin">
+          </div>
+          <p class="text-gray-600 font-medium text-sm">Memuat data...</p>
+        </div>
+
+        <div v-else-if="error" class="p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-center">
+          <p>{{ error }}</p>
+          <button @click="loadHomeInfo"
+            class="mt-2 px-4 py-1.5 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition">
+            Coba Lagi
+          </button>
+        </div>
 
         <div v-else-if="homeInfo" class="flex flex-row gap-2">
           <div class="p-2 border border-black rounded-md">

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.CreateRombelRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.rombel.UpdateRombelRequest;
+import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.rombel.RombelResponse;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
 import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
@@ -33,12 +34,12 @@ public class RombelController {
     }
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<RombelResponse>>> findAll() {
-        List<RombelResponse> result = rombelService.findAll().stream()
-            .map(rombel -> rombelService.rombelToResponse(rombel))
+    public ResponseEntity<BaseResponse<List<RombelBasicResponse>>> findAll() {
+        List<RombelBasicResponse> result = rombelService.findAll().stream()
+            .map(rombel -> rombelService.rombelToBasicResponse(rombel))
             .toList();
 
-        BaseResponse<List<RombelResponse>> response = BaseResponse.success(result);
+        BaseResponse<List<RombelBasicResponse>> response = BaseResponse.success(result);
 
         return ResponseEntity.ok(response);
     }
