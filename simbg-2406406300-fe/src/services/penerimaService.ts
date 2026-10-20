@@ -30,11 +30,13 @@ export interface PenerimaResponse {
     id: string
     nama: string
     nisn: string
+    tanggalLahir: Date
     rombelId: string
     namaRombel: string
     namaSekolah: string
     jenisKelamin: string
     kondisiKhusus: string
+    keterangan: string
     status: string
     tanggalPengajuan: Date
     tanggalVerifikasi: Date
@@ -75,6 +77,12 @@ export interface ReviewPenerimaRequest {
 export const penerimaService = {
     async findAll(): Promise<PenerimaBasicResponse[]> {
         const response = await api.get<ApiResponse<PenerimaBasicResponse[]>>('/penerima')
+
+        return response.data.data
+    },
+
+    async findPenerimaById(id: string): Promise<PenerimaResponse> {
+        const response = await api.get<ApiResponse<PenerimaResponse>>(`/penerima/${id}`)
 
         return response.data.data
     }

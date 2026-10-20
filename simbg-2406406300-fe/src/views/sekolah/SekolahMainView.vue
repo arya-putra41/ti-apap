@@ -123,23 +123,23 @@ onBeforeUnmount(() => {
                     </thead>
 
                     <tbody>
-                        <tr v-for="s in listSekolah" :key="s.id">
+                        <tr v-for="sekolah in listSekolah" :key="sekolah.id">
                             <td class="font-bold text-gray-900 whitespace-nowrap py-3 px-4">
-                                {{ s.id }}
+                                {{ sekolah.id }}
                             </td>
-                            <td class="py-3 px-4">{{ s.npsn }}</td>
-                            <td class="py-3 px-4">{{ s.namaSekolah }}</td>
-                            <td class="py-3 px-4">{{ s.jenjang }}</td>
+                            <td class="py-3 px-4">{{ sekolah.npsn }}</td>
+                            <td class="py-3 px-4">{{ sekolah.namaSekolah }}</td>
+                            <td class="py-3 px-4">{{ sekolah.jenjang }}</td>
                             <td class="py-3 px-4">
                                 <span :class="[
                                     'px-2.5 py-1 text-xs font-semibold rounded-full',
-                                    s.statusMitra === 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                    sekolah.statusMitra === 'AKTIF' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                                 ]">
-                                    {{ s.statusMitra }}
+                                    {{ sekolah.statusMitra }}
                                 </span>
                             </td>
                             <td class="py-3 px-4">
-                                <RouterLink :to="`/sekolah/${s.id}`">
+                                <RouterLink :to="`/sekolah/${sekolah.id}`">
                                     <VButton class="detail-button">Detail</VButton>
                                 </RouterLink>
                             </td>
@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
 }
 
 .detail-button {
-    @apply bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded text-sm transition;
+    @apply bg-pink-600 hover:bg-pink-800 text-white px-3 py-1 rounded text-sm transition;
 }
 
 :deep(.datatable-top) {

@@ -164,7 +164,7 @@ onBeforeUnmount(() => {
 }
 
 .detail-button {
-    @apply bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded text-sm transition;
+    @apply bg-pink-600 hover:bg-pink-800 text-white px-3 py-1 rounded text-sm transition;
 }
 
 :deep(.datatable-top) {

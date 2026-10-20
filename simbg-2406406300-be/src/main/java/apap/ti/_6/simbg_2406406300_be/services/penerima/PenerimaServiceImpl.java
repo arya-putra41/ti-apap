@@ -251,6 +251,7 @@ public class PenerimaServiceImpl implements PenerimaService {
             .id(penerima.getId())
             .nama(penerima.getNama())
             .nisn(penerima.getNisn())
+            .tanggalLahir(penerima.getTanggalLahir())
             .namaRombel(penerima.getRombel().getNamaRombel())
             .namaSekolah(penerima.getRombel().getSekolah().getNamaSekolah())
             .jenisKelamin(penerima.getJenisKelamin())

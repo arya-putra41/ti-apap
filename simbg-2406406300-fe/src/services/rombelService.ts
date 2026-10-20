@@ -48,5 +48,11 @@ export const rombelService = {
         const response = await api.get<ApiResponse<RombelBasicResponse[]>>('/rombel')
 
         return response.data.data
+    },
+
+    async findRombelById(id: string): Promise<RombelResponse> {
+        const response = await api.get<ApiResponse<RombelResponse>>(`/rombel/${id}`)
+
+        return response.data.data
     }
 }

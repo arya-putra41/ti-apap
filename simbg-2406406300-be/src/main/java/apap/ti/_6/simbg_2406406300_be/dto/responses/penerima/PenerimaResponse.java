@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.dto.responses.penerima;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class PenerimaResponse {
     private String id;
     private String nama;
     private String nisn;
+    private LocalDate tanggalLahir;
     private String namaRombel;
     private String namaSekolah;
     private String jenisKelamin;

@@ -7,7 +7,7 @@ const getLinkClass = (path: string) => route.path === path ? 'text-pink-600' : '
 </script>
 
 <template>
-    <header class="fixed flex items-center w-full gap-4 px-3 py-4 bg-white">
+    <header class="fixed z-50 flex items-center w-full gap-4 px-3 py-4 bg-white">
         <RouterLink to="/" class="text-xl font-bold text-pink-600">SIMBG</RouterLink>
         <nav class="flex gap-4">
             <RouterLink to="/sekolah" :class="getLinkClass('/sekolah')">Sekolah</RouterLink>

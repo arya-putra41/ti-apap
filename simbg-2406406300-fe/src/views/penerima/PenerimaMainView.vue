@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
                     <thead>
                         <tr>
                             <th class="py-3 px-4"><span class="flex items-center"> ID </span></th>
-                            <th data-searchable="false" class="py-3 px-4"><span class="flex items-center"> Nama </span></th>
+                            <th class="py-3 px-4"><span class="flex items-center"> Nama </span></th>
                             <th class="py-3 px-4"><span class="flex items-center"> NISN </span></th>
                             <th data-searchable="false" class="py-3 px-4"><span class="flex items-center"> Rombel/Sekolah </span></th>
                             <th data-searchable="false" class="py-3 px-4"><span class="flex items-center"> Kondisi Khusus </span></th>
@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
 }
 
 .detail-button {
-    @apply bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded text-sm transition;
+    @apply bg-pink-600 hover:bg-pink-800 text-white px-3 py-1 rounded text-sm transition;
 }
 
 :deep(.datatable-top) {
