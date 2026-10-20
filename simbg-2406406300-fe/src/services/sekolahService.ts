@@ -64,6 +64,16 @@ export const sekolahService = {
     },
     async findSekolahById(id: string): Promise<SekolahResponse> {
         const response = await api.get<ApiResponse<SekolahResponse>>(`/sekolah/${id}`)
+        
+        return response.data.data
+    },
+    async createSekolah(request: CreateSekolahRequest): Promise<SekolahResponse> {
+        const response = await api.post<ApiResponse<SekolahResponse>>('/sekolah/create', request)
+        
+        return response.data.data
+    },
+    async updateSekolah(request: UpdateSekolahRequest): Promise<SekolahResponse> {
+        const response = await api.post<ApiResponse<SekolahResponse>>('/sekolah/update', request)
 
         return response.data.data
     }

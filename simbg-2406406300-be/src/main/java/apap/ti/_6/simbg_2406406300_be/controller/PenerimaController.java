@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.CreatePenerimaRequest;
@@ -20,8 +21,10 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaReques
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaStatistics;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
 import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaService;
+import apap.ti._6.simbg_2406406300_be.services.penerima.PenerimaStatisticsService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,9 +32,11 @@ import jakarta.validation.Valid;
 public class PenerimaController {
     
     private PenerimaService penerimaService;
+    private PenerimaStatisticsService penerimaStatisticsService;
 
-    public PenerimaController(PenerimaService penerimaService) {
+    public PenerimaController(PenerimaService penerimaService, PenerimaStatisticsService penerimaStatisticsService) {
         this.penerimaService = penerimaService;
+        this.penerimaStatisticsService = penerimaStatisticsService;
     }
 
     @GetMapping("")
@@ -118,5 +123,12 @@ public class PenerimaController {
         return ResponseEntity.ok(response);
     }
 
-    // TODO: statistics
+    @GetMapping("/statistik")
+    public ResponseEntity<BaseResponse<PenerimaStatistics>> getPenerimaStatistics(@RequestParam(defaultValue = "BULANAN") String period, @RequestParam(defaultValue = "2026") int year) {
+        PenerimaStatistics statistics = penerimaStatisticsService.getStatistics(period, year);
+
+        BaseResponse<PenerimaStatistics> response = BaseResponse.success(statistics);
+
+        return ResponseEntity.ok(response);
+    }
 }

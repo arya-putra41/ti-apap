@@ -40,17 +40,6 @@ public class RiwayatServiceImpl implements RiwayatService {
     }
 
     @Override
-    public ZonedDateTime findTanggalAktivasiOfPenerima(String penerimaId) {
-        RiwayatStatusPenerima activation = riwayatRepository
-                .findFirstByPenerimaIdAndStatusBaruOrderByTanggalPerubahanDesc("AKTIF", penerimaId);
-        if (activation == null) {
-            return null;
-        } else {
-            return activation.getTanggalPerubahan();
-        }
-    }
-
-    @Override
     public RiwayatStatusPenerima createRiwayat(PenerimaManfaat penerima, String statusSebelumnya, String statusBaru,
             String keterangan) {
         RiwayatStatusPenerima newRiwayat = RiwayatStatusPenerima.builder()
