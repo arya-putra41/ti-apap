@@ -76,9 +76,20 @@ onMounted(loadHomeInfo)
           <div class="p-2 border border-black rounded-md">
             <h2 class="font-bold">Penerima Menunggu</h2>
             <p>{{ homeInfo.jumlahMenungguVerifikasi }}</p>
+            <RouterLink to="/penerima/antrian-verifikasi">
+              <VButton class="detail-button">Buka Antrian →</VButton>
+            </RouterLink>
           </div>
         </div>
       </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+@reference "@/assets/main.css";
+
+.detail-button {
+    @apply mt-2 bg-pink-600 hover:bg-pink-800 text-white px-3 py-1 rounded text-sm transition;
+}
+</style>

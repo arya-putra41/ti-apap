@@ -13,7 +13,7 @@ export interface CreateSekolahRequest {
     jalan: string
     namaKepalaSekolah: string
     teleponSekolah: string
-    tanggalBergabung: Date
+    tanggalBergabung: string
 }
 
 export interface UpdateSekolahRequest {
@@ -28,7 +28,7 @@ export interface UpdateSekolahRequest {
     jalan: string
     namaKepalaSekolah: string
     teleponSekolah: string
-    tanggalBergabung: Date
+    tanggalBergabung: string
 }
 
 export interface SekolahBasicResponse {

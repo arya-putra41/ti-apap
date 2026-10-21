@@ -3,9 +3,11 @@ withDefaults(defineProps<{
     id: string;
     label?: string | null;
     name?: string;
+    required?: boolean;
     modelValue: string;
 }>(), {
     modelValue: '',
+    required: false,
 });
 
 const emit = defineEmits(['update:modelValue'])
@@ -19,7 +21,7 @@ const handleInput = (e: Event) => {
 
 <template>
     <div class="flex flex-col gap-1 w-full">
-        <label :for="id" v-if="label">{{ label }}</label>
+        <label :for="id" v-if="label">{{ label }} <span v-if="required" class="text-red">*</span></label>
         <textarea :id="id" :name="name" :value="modelValue" class="rounded-lg" @input="handleInput"></textarea>
     </div>
 </template>

@@ -1,13 +1,16 @@
 package apap.ti._6.simbg_2406406300_be.services.wilayahid;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import apap.ti._6.simbg_2406406300_be.dto.responses.wilayahid.WilayahIdResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.wilayahid.WilayahIdWrapper;
 
 @Service
 public class WilayahIdServiceImpl implements WilayahIdService {
@@ -15,78 +18,82 @@ public class WilayahIdServiceImpl implements WilayahIdService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String BASE_URL = "https://wilayah.id/api";
 
+    // Helper method bertipe ParameterizedTypeReference untuk menangani deserialisasi generik
+    private List<WilayahIdResponse> fetchWilayahList(String url) {
+        try {
+            ResponseEntity<WilayahIdWrapper<WilayahIdResponse>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<WilayahIdWrapper<WilayahIdResponse>>() {}
+            );
+
+            WilayahIdWrapper<WilayahIdResponse> body = response.getBody();
+            return body != null && body.getData() != null ? body.getData() : Collections.emptyList();
+        } catch (Exception e) {
+            System.err.println("Error fetching wilayah data from " + url + ": " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     @Override
     public List<WilayahIdResponse> getProvinces() {
-        String url = BASE_URL + "/provinces.json";
-        WilayahIdResponse[] response = restTemplate.getForObject(url, WilayahIdResponse[].class);
-        return response != null ? Arrays.asList(response) : Collections.emptyList();
+        return fetchWilayahList(BASE_URL + "/provinces.json");
     }
 
     @Override
     public List<WilayahIdResponse> getRegencies(String provinceCode) {
-        String url = BASE_URL + "/regencies/" + provinceCode + ".json";
-        WilayahIdResponse[] response = restTemplate.getForObject(url, WilayahIdResponse[].class);
-        return response != null ? Arrays.asList(response) : Collections.emptyList();
+        return fetchWilayahList(BASE_URL + "/regencies/" + provinceCode + ".json");
     }
 
     @Override
     public List<WilayahIdResponse> getDistricts(String regencyCode) {
-        String url = BASE_URL + "/districts/" + regencyCode + ".json";
-        WilayahIdResponse[] response = restTemplate.getForObject(url, WilayahIdResponse[].class);
-        return response != null ? Arrays.asList(response) : Collections.emptyList();
+        return fetchWilayahList(BASE_URL + "/districts/" + regencyCode + ".json");
     }
 
     @Override
     public List<WilayahIdResponse> getVillages(String districtCode) {
-        String url = BASE_URL + "/villages/" + districtCode + ".json";
-        WilayahIdResponse[] response = restTemplate.getForObject(url, WilayahIdResponse[].class);
-        return response != null ? Arrays.asList(response) : Collections.emptyList();
+        return fetchWilayahList(BASE_URL + "/villages/" + districtCode + ".json");
     }
 
     @Override
-    public WilayahIdResponse getProvinceById(String provinceCode) {
-        return getProvinces().stream()
-                .filter(p -> p.getCode().equalsIgnoreCase(provinceCode))
+    public String getProvinceByName(String name) {
+        if (name == null) return null;
+
+        WilayahIdResponse province = getProvinces().stream()
+                .filter(p -> p.getName().equalsIgnoreCase(name.trim()))
                 .findFirst()
                 .orElse(null);
+        return province != null ? province.getCode() : null;
     }
 
     @Override
-    public WilayahIdResponse getRegencyById(String regencyCode) {
-        // Kode kabupaten/kota memiliki format 'XX.YY' (di mana XX adalah kode provinsi)
-        if (regencyCode == null || !regencyCode.contains(".")) {
-            return null;
-        }
-        String provinceCode = regencyCode.split("\\.")[0];
-        return getRegencies(provinceCode).stream()
-                .filter(r -> r.getCode().equalsIgnoreCase(regencyCode))
+    public String getRegencyByName(String name, String provinceCode) {
+        if (name == null || provinceCode == null) return null;
+        WilayahIdResponse regency = getRegencies(provinceCode).stream()
+                .filter(r -> r.getName().equalsIgnoreCase(name.trim()))
                 .findFirst()
                 .orElse(null);
+        return regency != null ? regency.getCode() : null;
     }
 
     @Override
-    public WilayahIdResponse getDistrictById(String districtCode) {
-        // Kode kecamatan memiliki format 'XX.YY.ZZ' (di mana XX.YY adalah kode kabupaten/kota)
-        if (districtCode == null || districtCode.indexOf('.') == -1) {
-            return null;
-        }
-        String regencyCode = districtCode.substring(0, districtCode.lastIndexOf('.'));
-        return getDistricts(regencyCode).stream()
-                .filter(d -> d.getCode().equalsIgnoreCase(districtCode))
+    public String getDistrictByName(String name, String regencyCode) {
+        if (name == null || regencyCode == null) return null;
+        WilayahIdResponse district = getDistricts(regencyCode).stream()
+                .filter(d -> d.getName().equalsIgnoreCase(name.trim()))
                 .findFirst()
                 .orElse(null);
+        return district != null ? district.getCode() : null;
     }
 
     @Override
-    public WilayahIdResponse getVillageById(String villageCode) {
-        // Kode kelurahan/desa memiliki format 'XX.YY.ZZ.WW' (di mana XX.YY.ZZ adalah kode kecamatan)
-        if (villageCode == null || villageCode.indexOf('.') == -1) {
-            return null;
-        }
-        String districtCode = villageCode.substring(0, villageCode.lastIndexOf('.'));
-        return getVillages(districtCode).stream()
-                .filter(v -> v.getCode().equalsIgnoreCase(villageCode))
+    public String getVillageByName(String name, String districtCode) {
+        if (name == null || districtCode == null) return null;
+        WilayahIdResponse village = getVillages(districtCode).stream()
+                .filter(v -> v.getName().equalsIgnoreCase(name.trim()))
                 .findFirst()
                 .orElse(null);
+        return village != null ? village.getCode() : null;
     }
 }

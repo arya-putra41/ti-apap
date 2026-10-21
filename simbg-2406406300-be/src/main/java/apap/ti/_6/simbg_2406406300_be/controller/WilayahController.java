@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import apap.ti._6.simbg_2406406300_be.dto.responses.wilayahid.WilayahIdResponse;
@@ -28,21 +29,9 @@ public class WilayahController {
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
-    @GetMapping("/provinsi/{provinceCode}")
-    public ResponseEntity<BaseResponse<WilayahIdResponse>> getProvinceById(@PathVariable String provinceCode) {
-        WilayahIdResponse result = wilayahIdService.getProvinceById(provinceCode);
-        return ResponseEntity.ok(BaseResponse.success(result));
-    }
-
     @GetMapping("/kota/{provinceCode}")
     public ResponseEntity<BaseResponse<List<WilayahIdResponse>>> getRegencies(@PathVariable String provinceCode) {
         List<WilayahIdResponse> result = wilayahIdService.getRegencies(provinceCode);
-        return ResponseEntity.ok(BaseResponse.success(result));
-    }
-
-    @GetMapping("/kota/detail/{regencyCode}")
-    public ResponseEntity<BaseResponse<WilayahIdResponse>> getRegencyById(@PathVariable String regencyCode) {
-        WilayahIdResponse result = wilayahIdService.getRegencyById(regencyCode);
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
@@ -52,21 +41,43 @@ public class WilayahController {
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
-    @GetMapping("/kecamatan/detail/{districtCode}")
-    public ResponseEntity<BaseResponse<WilayahIdResponse>> getDistrictById(@PathVariable String districtCode) {
-        WilayahIdResponse result = wilayahIdService.getDistrictById(districtCode);
-        return ResponseEntity.ok(BaseResponse.success(result));
-    }
-
     @GetMapping("/kelurahan/{districtCode}")
     public ResponseEntity<BaseResponse<List<WilayahIdResponse>>> getVillages(@PathVariable String districtCode) {
         List<WilayahIdResponse> result = wilayahIdService.getVillages(districtCode);
         return ResponseEntity.ok(BaseResponse.success(result));
     }
 
-    @GetMapping("/kelurahan/detail/{villageCode}")
-    public ResponseEntity<BaseResponse<WilayahIdResponse>> getVillageById(@PathVariable String villageCode) {
-        WilayahIdResponse result = wilayahIdService.getVillageById(villageCode);
-        return ResponseEntity.ok(BaseResponse.success(result));
+    // GET /api/wilayah/provinsi/code?name=Aceh
+    @GetMapping("/provinsi/code")
+    public ResponseEntity<BaseResponse<String>> getProvinceCodeByName(@RequestParam String name) {
+        String code = wilayahIdService.getProvinceByName(name);
+        return ResponseEntity.ok(BaseResponse.success(code));
+    }
+
+    // GET /api/wilayah/kota/code?name=Kota%20Banda%20Aceh&provinceCode=11
+    @GetMapping("/kota/code")
+    public ResponseEntity<BaseResponse<String>> getRegencyCodeByName(
+            @RequestParam String name, 
+            @RequestParam String provinceCode) {
+        String code = wilayahIdService.getRegencyByName(name, provinceCode);
+        return ResponseEntity.ok(BaseResponse.success(code));
+    }
+
+    // GET /api/wilayah/kecamatan/code?name=Kuta%20Alam&regencyCode=11.71
+    @GetMapping("/kecamatan/code")
+    public ResponseEntity<BaseResponse<String>> getDistrictCodeByName(
+            @RequestParam String name, 
+            @RequestParam String regencyCode) {
+        String code = wilayahIdService.getDistrictByName(name, regencyCode);
+        return ResponseEntity.ok(BaseResponse.success(code));
+    }
+
+    // GET /api/wilayah/kelurahan/code?name=Peunayong&districtCode=11.71.01
+    @GetMapping("/kelurahan/code")
+    public ResponseEntity<BaseResponse<String>> getVillageCodeByName(
+            @RequestParam String name, 
+            @RequestParam String districtCode) {
+        String code = wilayahIdService.getVillageByName(name, districtCode);
+        return ResponseEntity.ok(BaseResponse.success(code));
     }
 }

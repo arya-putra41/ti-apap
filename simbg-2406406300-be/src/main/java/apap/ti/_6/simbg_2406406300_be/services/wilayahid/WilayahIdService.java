@@ -11,8 +11,8 @@ public interface WilayahIdService {
     public List<WilayahIdResponse> getDistricts(String regencyCode); // kecamatan
     public List<WilayahIdResponse> getVillages(String districtCode); // kelurahan/desa
 
-    public WilayahIdResponse getProvinceById(String provinceCode);
-    public WilayahIdResponse getRegencyById(String regencyCode);
-    public WilayahIdResponse getDistrictById(String districtCode);
-    public WilayahIdResponse getVillageById(String villageCode);
+    public String getProvinceByName(String name);
+    public String getRegencyByName(String name, String provinceCode);
+    public String getDistrictByName(String name, String regencyCode);
+    public String getVillageByName(String name, String districtCode);
 }
