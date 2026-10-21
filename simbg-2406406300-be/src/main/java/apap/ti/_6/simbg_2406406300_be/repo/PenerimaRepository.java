@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.repo;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,8 @@ public interface PenerimaRepository extends JpaRepository<PenerimaManfaat, Strin
     List<PenerimaManfaat> findByRombelId(String rombelId);
 
     int countByStatus(String status);
+
+    List<PenerimaManfaat> findByStatusOrderByTanggalPengajuanAsc(String status);
+
+    List<PenerimaManfaat> findByStatusAndUpdatedAtBefore(String status, ZonedDateTime updatedAt);
 }

@@ -58,6 +58,13 @@ public class PenerimaServiceImpl implements PenerimaService {
     }
 
     @Override
+    public List<PenerimaManfaat> getQueue() {
+        List<PenerimaManfaat> queue = penerimaRepository.findByStatusOrderByTanggalPengajuanAsc("DIAJUKAN");
+
+        return queue;
+    }
+
+    @Override
     public PenerimaManfaat findPenerimaById(String id) throws PenerimaNotFoundException {
         return penerimaRepository.findById(id)
                 .orElseThrow(() -> new PenerimaNotFoundException(id));

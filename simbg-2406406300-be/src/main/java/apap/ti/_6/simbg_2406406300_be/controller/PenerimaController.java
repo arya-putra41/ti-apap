@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import apap.ti._6.simbg_2406406300_be.configs.PenerimaDaysConfig;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.CreatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.DeactivatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.RejectPenerimaRequest;
@@ -20,6 +21,7 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.ReviewPenerimaReques
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaQueueResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaStatistics;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
@@ -33,10 +35,12 @@ public class PenerimaController {
     
     private PenerimaService penerimaService;
     private PenerimaStatisticsService penerimaStatisticsService;
+    private PenerimaDaysConfig penerimaDaysConfig;
 
-    public PenerimaController(PenerimaService penerimaService, PenerimaStatisticsService penerimaStatisticsService) {
+    public PenerimaController(PenerimaService penerimaService, PenerimaStatisticsService penerimaStatisticsService, PenerimaDaysConfig penerimaDaysConfig) {
         this.penerimaService = penerimaService;
         this.penerimaStatisticsService = penerimaStatisticsService;
+        this.penerimaDaysConfig = penerimaDaysConfig;
     }
 
     @GetMapping("")
@@ -131,4 +135,20 @@ public class PenerimaController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/antrian-verifikasi")
+    public ResponseEntity<BaseResponse<PenerimaQueueResponse>> getPenerimaQueue() {
+        List<PenerimaBasicResponse> queue = penerimaService.getQueue().stream()
+            .map(penerima -> penerima.toBasicResponse())
+            .toList();
+
+        PenerimaQueueResponse queueWithDayLimit = PenerimaQueueResponse.builder()
+            .queue(queue)
+            .maxDays(penerimaDaysConfig.getVerificationQueueMaxDays())
+            .build();
+
+        BaseResponse<PenerimaQueueResponse> response = BaseResponse.success(queueWithDayLimit);
+
+        return ResponseEntity.ok(response);
+    } 
 }

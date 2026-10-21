@@ -24,6 +24,8 @@ import apap.ti._6.simbg_2406406300_be.models.PenerimaManfaat;
 public interface PenerimaService {
     public List<PenerimaManfaat> findAll();
 
+    public List<PenerimaManfaat> getQueue();
+
     public PenerimaManfaat findPenerimaById(String id) throws PenerimaNotFoundException;
 
     public PenerimaManfaat createPenerima(CreatePenerimaRequest request) throws NisnExistsException, KeteranganIllegalForKondisiException, RombelNotFoundException, RombelQuotaEmptyException, RombelInactiveException;
@@ -41,6 +43,4 @@ public interface PenerimaService {
     public PenerimaManfaat reviewPenerima(ReviewPenerimaRequest request) throws PenerimaNotFoundException, PenerimaWrongStatusException;
 
     public PenerimaResponse penerimaToResponse(PenerimaManfaat penerima);
-
-    // TODO: verification queue, graphs
 }
