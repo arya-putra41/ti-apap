@@ -7,12 +7,12 @@ export interface CreateRombelRequest {
     namaRombel: string
     tingkat: string
     tahunAjaran: string
-    kuotaPenerima: number
+    kuotaPenerima: string
 }
 
 export interface UpdateRombelRequest {
     id: string
-    kuotaPenerima: number
+    kuotaPenerima: string
     status: string
 }
 
@@ -54,5 +54,17 @@ export const rombelService = {
         const response = await api.get<ApiResponse<RombelResponse>>(`/rombel/${id}`)
 
         return response.data.data
-    }
+    },
+
+    async createRombel(request: CreateRombelRequest): Promise<RombelResponse> {
+        const response = await api.post<ApiResponse<RombelResponse>>('/rombel/create', request)
+
+        return response.data.data
+    },
+
+    async updateRombel(request: UpdateRombelRequest): Promise<RombelResponse> {
+        const response = await api.put<ApiResponse<RombelResponse>>('/rombel/update', request)
+
+        return response.data.data
+    },
 }

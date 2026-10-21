@@ -101,7 +101,7 @@ onBeforeUnmount(() => {
                             <VButton class="border border-black hover:bg-pink-200 text-black">Edit Sekolah</VButton>
                         </RouterLink>
 
-                        <RouterLink :to="`/rombel/create`">
+                        <RouterLink :to="`/rombel/create?sekolahId=${sekolah.id}`" >
                             <VButton class="border border-black hover:bg-pink-200 text-black">Tambah Rombel</VButton>
                         </RouterLink>
 

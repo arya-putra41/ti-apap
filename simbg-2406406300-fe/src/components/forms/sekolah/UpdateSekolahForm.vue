@@ -188,9 +188,9 @@ const handleSubmit = async () => {
 
     <!-- Submit Button -->
     <div class="flex justify-end gap-2 pt-4">
-      <VButton @click="router.back()" type="button" class="bg-slate-600 hover:bg-slate-800 text-white">Cancel</VButton>
+      <VButton @click="router.back()" type="button" class="bg-slate-600 hover:bg-slate-800 text-white">Batal</VButton>
       <VButton type="submit" :disabled="loading" class="bg-pink-600 hover:bg-pink-800 text-white disabled:opacity-50 cursor-pointer">
-        {{ loading ? 'Saving...' : 'Save' }}
+        {{ loading ? 'Menyimpan...' : 'Simpan' }}
       </VButton>
     </div>
   </form>
