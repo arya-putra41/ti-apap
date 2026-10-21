@@ -2,30 +2,30 @@
 import { onMounted, ref, watch, type PropType } from 'vue'
 import { useRouter } from 'vue-router'
 import { type UpdateSekolahRequest } from '@/services/sekolahService'
-import { wilayahService, type WilayahOption } from '@/services/wilayahService'
+import { wilayahService, type Wilayah } from '@/services/wilayahService'
 import VInput from '../../common/VInput.vue';
 import VTextArea from '../../common/VTextArea.vue';
 import VButton from '../../common/VButton.vue';
 import VSelect from '../../common/VSelect.vue';
 
 const props = defineProps({
-    action: {
-        type: Function as PropType<(data: UpdateSekolahRequest) => Promise<void>>,
-        required: true,
-    },
-    profileModel: {
-        type: Object as PropType<UpdateSekolahRequest>,
-        required: true,
-    }
+  action: {
+    type: Function as PropType<(data: UpdateSekolahRequest) => Promise<void>>,
+    required: true,
+  },
+  profileModel: {
+    type: Object as PropType<UpdateSekolahRequest>,
+    required: true,
+  }
 })
 
 const router = useRouter()
 const model = ref<UpdateSekolahRequest>({ ...props.profileModel })
 
-const provinceList = ref<WilayahOption[]>([])
-const regencyList = ref<WilayahOption[]>([])
-const districtList = ref<WilayahOption[]>([])
-const villageList = ref<WilayahOption[]>([])
+const provinceList = ref<Wilayah[]>([])
+const regencyList = ref<Wilayah[]>([])
+const districtList = ref<Wilayah[]>([])
+const villageList = ref<Wilayah[]>([])
 
 const loading = ref(true)
 const errorMessage = ref('')
@@ -127,14 +127,25 @@ const handleSubmit = async () => {
   </div>
 
   <form v-else @submit.prevent="handleSubmit" class="flex flex-col gap-6 py-4">
-    <div v-if="errorMessage" class="p-4 bg-red-50 text-red-700 rounded-xl">
-      {{ errorMessage }}
+    <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        <div class="flex flex-col gap-2">
+          <h2 class="text-xl font-bold">Terjadi kesalahan</h2>
+          <span>{{ errorMessage }}</span>
+        </div>
+      </div>
+      <button type="button" @click="errorMessage = ''" class="text-red-400 hover:text-red-600 font-bold ml-4">
+        &times;
+      </button>
     </div>
 
     <!-- Row 1: NPSN, Nama, Jenjang -->
     <div class="grid grid-cols-3 gap-4">
-      <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN" required/>
-      <VInput v-model="model.namaSekolah" id="namaSekolah" name="namaSekolah" label="Nama Sekolah" required/>
+      <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN" required />
+      <VInput v-model="model.namaSekolah" id="namaSekolah" name="namaSekolah" label="Nama Sekolah" required />
       <VSelect v-model="model.jenjang" id="jenjang" name="jenjang" label="Jenjang" required>
         <option value="">Pilih Jenjang</option>
         <option value="SD">SD</option>
@@ -170,9 +181,9 @@ const handleSubmit = async () => {
 
     <!-- Row 4: Data Ekstra -->
     <div class="grid grid-cols-3 gap-4">
-      <VInput v-model="model.namaKepalaSekolah" id="namaKepalaSekolah" name="namaKepalaSekolah" label="Nama Kepala Sekolah" required/>
-      <VInput v-model="model.teleponSekolah" id="teleponSekolah" name="teleponSekolah" label="Telepon Sekolah" required/>
-      <VInput id="tanggalBergabung" name="tanggalBergabung" type="date" v-model="model.tanggalBergabung" label="Tanggal Bergabung" required/>
+      <VInput v-model="model.namaKepalaSekolah" id="namaKepalaSekolah" name="namaKepalaSekolah" label="Nama Kepala Sekolah" required />
+      <VInput v-model="model.teleponSekolah" id="teleponSekolah" name="teleponSekolah" label="Telepon Sekolah" required />
+      <VInput id="tanggalBergabung" name="tanggalBergabung" type="date" v-model="model.tanggalBergabung" label="Tanggal Bergabung" required />
     </div>
 
     <!-- Submit Button -->

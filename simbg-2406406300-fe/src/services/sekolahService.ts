@@ -73,7 +73,7 @@ export const sekolahService = {
         return response.data.data
     },
     async updateSekolah(request: UpdateSekolahRequest): Promise<SekolahResponse> {
-        const response = await api.post<ApiResponse<SekolahResponse>>('/sekolah/update', request)
+        const response = await api.put<ApiResponse<SekolahResponse>>('/sekolah/update', request)
 
         return response.data.data
     }

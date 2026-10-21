@@ -6,7 +6,7 @@ import VSelect from '../../common/VSelect.vue';
 import { onMounted, type PropType, ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { type CreateSekolahRequest } from '@/services/sekolahService.ts';
-import { wilayahService, type WilayahOption } from '@/services/wilayahService.ts';
+import { wilayahService, type Wilayah } from '@/services/wilayahService.ts';
 
 const router = useRouter();
 
@@ -23,10 +23,10 @@ const props = defineProps({
 const model = toRefs(props).profileModel;
 const emit = defineEmits(['update:modelValue'])
 
-const provinceList = ref<WilayahOption[]>([])
-const regencyList = ref<WilayahOption[]>([])
-const districtList = ref<WilayahOption[]>([])
-const villageList = ref<WilayahOption[]>([])
+const provinceList = ref<Wilayah[]>([])
+const regencyList = ref<Wilayah[]>([])
+const districtList = ref<Wilayah[]>([])
+const villageList = ref<Wilayah[]>([])
 
 // State untuk menangkap error dan status loading
 const errorMessage = ref('')

@@ -1,24 +1,24 @@
 import { api } from "./api"
 
-export interface WilayahOption {
+export interface Wilayah {
     code: string
     name: string
 }
 
 export const wilayahService = {
-    async getProvinsi(): Promise<WilayahOption[]> {
+    async getProvinsi(): Promise<Wilayah[]> {
         const res = await api.get('/wilayah/provinsi')
         return res.data.data
     },
-    async getKota(provinceCode: string): Promise<WilayahOption[]> {
+    async getKota(provinceCode: string): Promise<Wilayah[]> {
         const res = await api.get(`/wilayah/kota/${provinceCode}`)
         return res.data.data
     },
-    async getKecamatan(regencyCode: string): Promise<WilayahOption[]> {
+    async getKecamatan(regencyCode: string): Promise<Wilayah[]> {
         const res = await api.get(`/wilayah/kecamatan/${regencyCode}`)
         return res.data.data
     },
-    async getKelurahan(districtCode: string): Promise<WilayahOption[]> {
+    async getKelurahan(districtCode: string): Promise<Wilayah[]> {
         const res = await api.get(`/wilayah/kelurahan/${districtCode}`)
         return res.data.data
     },
