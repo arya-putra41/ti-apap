@@ -269,7 +269,7 @@ onBeforeUnmount(() => {
                 
                 <p class="text-gray-600 text-sm">
                     Apakah Anda yakin ingin menonaktifkan mitra sekolah 
-                    <span class="font-bold text-gray-900">{{ sekolah?.namaSekolah }}</span>?
+                    <span class="font-bold text-gray-900">{{ sekolah?.namaSekolah }}</span>? Untuk menonaktifkan sekolah, <span class="font-bold text-gray-900">semua rombongan belajar di sekolah ini harus ditutup terlebih dahulu.</span>
                 </p>
 
                 <!-- Pesan Error dari Backend jika Gagal (Misal: Masih ada Rombel Aktif) -->

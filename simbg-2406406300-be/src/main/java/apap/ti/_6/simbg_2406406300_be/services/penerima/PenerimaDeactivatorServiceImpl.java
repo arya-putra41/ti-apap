@@ -29,6 +29,10 @@ public class PenerimaDeactivatorServiceImpl implements PenerimaDeactivatorServic
             for (PenerimaManfaat penerima : listPenerima) {
                 String prevStatus = penerima.getStatus();
 
+                if (prevStatus == "DITOLAK" || prevStatus == "NONAKTIF") {
+                    continue;
+                }
+
                 penerima.setStatus("NONAKTIF");
 
                 riwayatService.createRiwayat(penerima, prevStatus, "NONAKTIF", "Dinonaktifkan otomatis karena rombel ditutup");

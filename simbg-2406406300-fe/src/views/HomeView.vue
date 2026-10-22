@@ -69,8 +69,8 @@ onMounted(loadHomeInfo)
           </div>
 
           <div class="p-2 border border-black rounded-md">
-            <h2 class="font-bold">Kuota Terpakai</h2>
-            <p>{{ homeInfo.persentaseKuotaTerpakai }}</p>
+            <h2 class="font-bold">Persentase Kuota Terpakai</h2>
+            <p>{{ homeInfo.persentaseKuotaTerpakai }}%</p>
           </div>
 
           <div class="p-2 border border-black rounded-md">
