@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
                             <VButton class="border border-black hover:bg-pink-200 text-black">Ubah Data</VButton>
                         </RouterLink>
 
-                        <RouterLink :to="`/penerima/create`">
+                        <RouterLink v-if="parseInt(rombel.sisaKuota) > 0 && rombel.status == 'AKTIF'" :to="`/penerima/create?rombelId=${rombelId}`">
                             <VButton class="border border-black hover:bg-pink-200 text-black">Tambah Penerima</VButton>
                         </RouterLink>
                     </div>

@@ -46,6 +46,11 @@ public class RombelServiceImpl implements RombelService {
     }
 
     @Override
+    public List<RombonganBelajar> findActive() {
+        return rombelRepository.findByStatus("AKTIF");
+    }
+
+    @Override
     public RombonganBelajar findRombelById(String id) throws RombelNotFoundException {
         return rombelRepository.findById(id)
                 .orElseThrow(() -> new RombelNotFoundException(id));
@@ -121,7 +126,7 @@ public class RombelServiceImpl implements RombelService {
     public RombelResponse rombelToResponse(RombonganBelajar rombel) throws SekolahNotFoundException {
         Sekolah sekolahPemilikRombel = rombel.getSekolah();
 
-        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findPenerimaByRombelId(rombel.getId()).stream()
+        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findOngoingPenerimaByRombelId(rombel.getId()).stream()
             .map(penerima -> penerima.toBasicResponse())
             .toList();
 

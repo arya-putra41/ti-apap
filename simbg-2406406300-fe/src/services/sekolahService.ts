@@ -62,6 +62,11 @@ export const sekolahService = {
 
         return response.data.data
     },
+    async findActive(): Promise<SekolahBasicResponse[]> {
+        const response = await api.get<ApiResponse<SekolahBasicResponse[]>>('/sekolah/aktif')
+
+        return response.data.data
+    },
     async findSekolahById(id: string): Promise<SekolahResponse> {
         const response = await api.get<ApiResponse<SekolahResponse>>(`/sekolah/${id}`)
         

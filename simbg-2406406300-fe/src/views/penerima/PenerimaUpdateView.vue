@@ -56,9 +56,12 @@ const handleUpdate = async (formData: UpdatePenerimaRequest) => {
     id: penerimaId,
   }
 
-  await penerimaService.updatePenerima(payload)
-  toast.success('Data penerima berhasil diperbarui!')
-  router.push('/penerima')
+  if (await penerimaService.updatePenerima(payload)) {
+        toast.success('Data penerima berhasil diperbarui!')
+        router.push(`/penerima/${penerimaId}`);
+    } else {
+        toast.error('Gagal memperbarui data penerima. Coba lagi nanti');
+  }
 }
 </script>
 

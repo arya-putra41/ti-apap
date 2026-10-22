@@ -16,6 +16,8 @@ import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 public interface RombelService {
     public List<RombonganBelajar> findAll();
 
+    public List<RombonganBelajar> findActive();
+
     public RombonganBelajar findRombelById(String id) throws RombelNotFoundException;
 
     public RombonganBelajar createRombel(CreateRombelRequest request) throws SekolahNotFoundException, SekolahInactiveException;

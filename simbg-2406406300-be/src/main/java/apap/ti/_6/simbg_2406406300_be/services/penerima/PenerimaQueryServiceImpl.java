@@ -1,6 +1,7 @@
 package apap.ti._6.simbg_2406406300_be.services.penerima;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
 
     private PenerimaRepository penerimaRepository;
     private RiwayatService riwayatService;
+
+    private final Set<String> ongoingStatuses = Set.of("DIAJUKAN", "TERVERIFIKASI", "AKTIF"); 
 
     public PenerimaQueryServiceImpl(PenerimaRepository penerimaRepository, RiwayatService riwayatService) {
         this.penerimaRepository = penerimaRepository;
@@ -36,6 +39,13 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
     @Override
     public List<PenerimaManfaat> findPenerimaByRombelId(String rombelId) {
         return penerimaRepository.findByRombelId(rombelId);
+    }
+
+    @Override
+    public List<PenerimaManfaat> findOngoingPenerimaByRombelId(String rombelId) {
+        return penerimaRepository.findByRombelId(rombelId).stream()
+            .filter(penerima -> ongoingStatuses.contains(penerima.getStatus()))
+            .toList();
     }
 
     @Override

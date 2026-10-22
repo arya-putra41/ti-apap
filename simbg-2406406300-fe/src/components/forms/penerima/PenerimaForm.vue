@@ -48,7 +48,7 @@ watch(
 )
 
 const getRombel = async () => {
-    listRombel.value = await rombelService.findAll()
+    listRombel.value = await rombelService.findActive()
 }
 
 const handleSubmit = async () => {

@@ -47,7 +47,7 @@ watch(
 )
 
 const getSekolah = async () => {
-    listSekolah.value = await sekolahService.findAll();
+    listSekolah.value = await sekolahService.findActive();
 }
 
 const handleSubmit = async () => {

@@ -37,6 +37,10 @@ public class SekolahServiceImpl implements SekolahService {
         return sekolahRepository.findAll();
     }
 
+    public List<Sekolah> findActive() {
+        return sekolahRepository.findByStatusMitra("AKTIF");
+    }
+
     @Override
     public Sekolah findSekolahById(String id) throws SekolahNotFoundException {
         return sekolahRepository.findById(id)

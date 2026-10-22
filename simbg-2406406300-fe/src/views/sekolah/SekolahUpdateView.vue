@@ -144,7 +144,7 @@ const updateSekolah = async (formData: UpdateSekolahRequest) => {
 
     if (await sekolahService.updateSekolah(updateRequest)) {
         toast.success('Data sekolah diperbarui!');
-        router.push('/sekolah');
+        router.push(`/sekolah/${sekolahId}`);
     } else {
         toast.error('Gagal memperbarui data sekolah. Coba lagi nanti');
     }

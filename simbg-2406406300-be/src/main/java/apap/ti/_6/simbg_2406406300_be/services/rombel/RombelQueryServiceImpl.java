@@ -62,7 +62,7 @@ public class RombelQueryServiceImpl implements RombelQueryService {
     public RombelResponse rombelToResponse(RombonganBelajar rombel) {
         Sekolah sekolahPemilikRombel = rombel.getSekolah();
 
-        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findPenerimaByRombelId(rombel.getId()).stream()
+        List<PenerimaBasicResponse> listPenerima = penerimaQueryService.findOngoingPenerimaByRombelId(rombel.getId()).stream()
             .map(penerima -> penerima.toBasicResponse())
             .toList();
 

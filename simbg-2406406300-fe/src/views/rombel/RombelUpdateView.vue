@@ -41,9 +41,12 @@ const handleUpdate = async (formData: UpdateRombelRequest) => {
     kuotaPenerima: formData.kuotaPenerima // Pastikan dikirim sebagai number
   }
 
-  await rombelService.updateRombel(payload)
-  toast.success('Data rombel berhasil diperbarui!')
-  router.push('/rombel')
+  if (await rombelService.updateRombel(payload)) {
+        toast.success('Data rombel berhasil diperbarui!')
+        router.push(`/rombel/${rombelId}`);
+    } else {
+        toast.error('Gagal memperbarui data rombel. Coba lagi nanti');
+  }
 }
 </script>
 

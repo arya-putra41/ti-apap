@@ -19,8 +19,10 @@ const profileModel = reactive<CreateRombelRequest>({
 });
 
 const addRombel = async (bodyRequest: CreateRombelRequest) => {
-    if (await rombelService.createRombel(bodyRequest)) {
-        router.push('/rombel')
+    const newRombel = await rombelService.createRombel(bodyRequest)
+    if (newRombel) {
+        const rombelId = newRombel.id
+        router.push(`/rombel/${rombelId}`)
     } else {
         toast.error('Gagal mendaftarkan data rombel. Coba lagi nanti')
         return

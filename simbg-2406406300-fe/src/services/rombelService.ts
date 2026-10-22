@@ -49,19 +49,21 @@ export const rombelService = {
 
         return response.data.data
     },
+    async findActive(): Promise<RombelBasicResponse[]> {
+        const response = await api.get<ApiResponse<RombelBasicResponse[]>>('/rombel/aktif')
 
+        return response.data.data
+    },
     async findRombelById(id: string): Promise<RombelResponse> {
         const response = await api.get<ApiResponse<RombelResponse>>(`/rombel/${id}`)
 
         return response.data.data
     },
-
     async createRombel(request: CreateRombelRequest): Promise<RombelResponse> {
         const response = await api.post<ApiResponse<RombelResponse>>('/rombel/create', request)
 
         return response.data.data
     },
-
     async updateRombel(request: UpdateRombelRequest): Promise<RombelResponse> {
         const response = await api.put<ApiResponse<RombelResponse>>('/rombel/update', request)
 

@@ -43,6 +43,17 @@ public class RombelController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/aktif")
+    public ResponseEntity<BaseResponse<List<RombelBasicResponse>>> findActiveRombel() {
+        List<RombelBasicResponse> result = rombelService.findActive().stream()
+            .map(rombel -> rombelService.rombelToBasicResponse(rombel))
+            .toList();
+
+        BaseResponse<List<RombelBasicResponse>> response = BaseResponse.success(result);
+
+        return ResponseEntity.ok(response);
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<RombelResponse>> findRombelById(@PathVariable String id) {

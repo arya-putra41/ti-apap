@@ -43,6 +43,17 @@ public class SekolahController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/aktif")
+    public ResponseEntity<BaseResponse<List<SekolahBasicResponse>>> findActiveSekolah() {
+        List<SekolahBasicResponse> result = sekolahService.findActive().stream()
+                .map(s -> s.toBasicResponse())
+                .toList();
+
+        BaseResponse<List<SekolahBasicResponse>> response = BaseResponse.success(result);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse<SekolahResponse>> findSekolahById(@PathVariable String id) {
         Sekolah foundSekolah = sekolahService.findSekolahById(id);

@@ -13,6 +13,8 @@ public interface PenerimaQueryService {
 
     public List<PenerimaManfaat> findPenerimaByRombelId(String rombelId);
 
+    public List<PenerimaManfaat> findOngoingPenerimaByRombelId(String rombelId);
+
     public int countAllActivePenerima();
 
     public int countAllPenerimaAwaitingVerification();

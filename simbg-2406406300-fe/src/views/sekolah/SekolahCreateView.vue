@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { sekolahService, type CreateSekolahRequest } from '@/services/sekolahService';
+import { sekolahService, type CreateSekolahRequest, type SekolahResponse } from '@/services/sekolahService';
 import SekolahForm from '@/components/forms/sekolah/SekolahForm.vue';
 import { toast } from 'vue-sonner';
 
@@ -22,8 +22,10 @@ const sekolahModel = reactive<CreateSekolahRequest>({
 });
 
 const addSekolah = async (bodyRequest: CreateSekolahRequest) => {
-    if (await sekolahService.createSekolah(bodyRequest)) {
-        router.push('/sekolah')
+    const newSekolah = await sekolahService.createSekolah(bodyRequest)
+    if (newSekolah) {
+        const sekolahId = newSekolah.id
+        router.push(`/sekolah/${sekolahId}`)
     } else {
         toast.error('Gagal mendaftarkan data sekolah. Coba lagi nanti')
         return

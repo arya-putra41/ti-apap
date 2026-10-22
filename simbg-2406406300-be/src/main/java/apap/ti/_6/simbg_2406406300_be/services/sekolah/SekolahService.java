@@ -15,6 +15,8 @@ import apap.ti._6.simbg_2406406300_be.models.Sekolah;
 public interface SekolahService {
     public List<Sekolah> findAll();
 
+    public List<Sekolah> findActive();
+
     public Sekolah findSekolahById(String id) throws SekolahNotFoundException;
 
     public Sekolah createSekolah(CreateSekolahRequest request) throws NpsnExistsException;

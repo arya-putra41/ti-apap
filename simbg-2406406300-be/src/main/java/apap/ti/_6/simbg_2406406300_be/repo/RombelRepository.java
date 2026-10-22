@@ -10,6 +10,8 @@ import apap.ti._6.simbg_2406406300_be.models.RombonganBelajar;
 public interface RombelRepository extends JpaRepository<RombonganBelajar, String> {
     public List<RombonganBelajar> findBySekolahId(String sekolahId);
 
+    List<RombonganBelajar> findByStatus(String status);
+
     public boolean existsBySekolahIdAndStatus(String sekolahId, String status); 
 
     int countByStatus(String status);

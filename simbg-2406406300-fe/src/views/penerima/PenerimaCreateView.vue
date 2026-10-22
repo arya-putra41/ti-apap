@@ -21,8 +21,10 @@ const profileModel = reactive<CreatePenerimaRequest>({
 });
 
 const addPenerima = async (bodyRequest: CreatePenerimaRequest) => {
-    if (await penerimaService.createPenerima(bodyRequest)) {
-        router.push('/penerima')
+    const penerima = await penerimaService.createPenerima(bodyRequest)
+    if (penerima) {
+        const penerimaId = penerima.id
+        router.push(`/penerima/${penerimaId}`)
     } else {
         toast.error('Gagal mendaftarkan data penerima. Coba lagi nanti')
         return

@@ -81,8 +81,8 @@ onMounted(getRombel)
             </button>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-            <VSelect v-model="model.petugasVerifikasiId" id="petugasVerifikasiId" name="petugasVerifikasiId" label="Petugas Verifikasi" required class="col-span-2">
+        <div class="grid grid-cols-2 gap-4">
+            <VSelect v-model="model.petugasVerifikasiId" id="petugasVerifikasiId" name="petugasVerifikasiId" label="Petugas Verifikasi" required>
                 <option value="">Pilih petugas...</option>
                 <option v-for="p in listPetugas" :key="p.id" :value="p.id">{{ p.nama }} - {{ p.wilayahTugas }}</option>
             </VSelect>
