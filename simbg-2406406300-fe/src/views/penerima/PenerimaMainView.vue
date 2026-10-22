@@ -103,9 +103,17 @@ onBeforeUnmount(() => {
         <div class="w-full mx-auto flex flex-col gap-6 py-6 px-10 rounded-xl shadow-md">
             <div class="flex justify-between items-center pb-4 border-b">
                 <h1 class="text-2xl font-bold text-gray-800">Daftar Penerima Manfaat</h1>
-                <RouterLink to="/penerima/create">
-                    <VButton class="add-button">Tambah Penerima</VButton>
-                </RouterLink>
+                <div class="flex flex-row gap-2">
+                    <RouterLink to="/penerima/create">
+                        <VButton class="add-button">Tambah Penerima</VButton>
+                    </RouterLink>
+                    <RouterLink to="/penerima/antrian-verifikasi">
+                        <VButton class="add-button">Antrian Verifikasi</VButton>
+                    </RouterLink>
+                    <RouterLink to="/penerima/statistik">
+                        <VButton class="add-button">Statistik Penerima</VButton>
+                    </RouterLink>
+                </div>
             </div>
 
             <div class="flex gap-3">
@@ -127,8 +135,7 @@ onBeforeUnmount(() => {
 
             <div v-else-if="error" class="p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg text-center">
                 <p>{{ error }}</p>
-                <button @click="loadListPenerima"
-                    class="mt-2 px-4 py-1.5 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition">
+                <button @click="loadListPenerima" class="mt-2 px-4 py-1.5 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition">
                     Coba Lagi
                 </button>
             </div>

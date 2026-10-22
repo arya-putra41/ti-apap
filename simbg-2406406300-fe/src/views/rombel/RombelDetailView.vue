@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
                             <td class="py-3 px-4">{{ penerima.nama }}</td>
                             <td class="py-3 px-4">{{ penerima.nisn }}</td>
                             <td class="py-3 px-4">{{ formatKondisiKhusus(penerima.kondisiKhusus) }}</td>
-                            <td class="py-3 px-4">{{ format(new Date(penerima.tanggalPengajuan), 'dd MMM yyyy') }}</td>
+                            <td class="py-3 px-4">{{ format(new Date(penerima.tanggalPengajuan), 'd MMM yyyy') }}</td>
                             <td class="py-3 px-4">
                                 <span :class="[
                                     'px-2.5 py-1 text-xs font-semibold rounded-full',

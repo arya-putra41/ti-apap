@@ -252,7 +252,7 @@ onBeforeUnmount(() => {
                     <tbody>
                         <tr v-for="riwayat in riwayatList" :key="riwayat.id">
                             <td class="font-bold text-gray-900 whitespace-nowrap py-3 px-4">
-                                {{ format(new Date(riwayat.tanggalPerubahan), 'dd MMM yyyy, hh:mm') }}
+                                {{ format(new Date(riwayat.tanggalPerubahan), 'd MMM yyyy, hh:mm') }}
                             </td>
                             <td class="py-3 px-4 flex flex-row gap-1 items-center">
                                 <div v-if="riwayat.statusSebelumnya" :class="[

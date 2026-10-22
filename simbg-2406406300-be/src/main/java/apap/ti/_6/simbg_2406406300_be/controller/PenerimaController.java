@@ -22,6 +22,7 @@ import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.UpdatePenerimaReques
 import apap.ti._6.simbg_2406406300_be.dto.requests.penerima.VerifyPenerimaRequest;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaBasicResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaQueueResponse;
+import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaQueueWrapper;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaResponse;
 import apap.ti._6.simbg_2406406300_be.dto.responses.penerima.PenerimaStatistics;
 import apap.ti._6.simbg_2406406300_be.httpresponses.BaseResponse;
@@ -137,17 +138,17 @@ public class PenerimaController {
     }
 
     @GetMapping("/antrian-verifikasi")
-    public ResponseEntity<BaseResponse<PenerimaQueueResponse>> getPenerimaQueue() {
-        List<PenerimaBasicResponse> queue = penerimaService.getQueue().stream()
-            .map(penerima -> penerima.toBasicResponse())
+    public ResponseEntity<BaseResponse<PenerimaQueueWrapper>> getPenerimaQueue() {
+        List<PenerimaQueueResponse> queue = penerimaService.getQueue().stream()
+            .map(penerima -> penerima.toQueueResponse())
             .toList();
 
-        PenerimaQueueResponse queueWithDayLimit = PenerimaQueueResponse.builder()
+        PenerimaQueueWrapper queueWithDayLimit = PenerimaQueueWrapper.builder()
             .queue(queue)
             .maxDays(penerimaDaysConfig.getVerificationQueueMaxDays())
             .build();
 
-        BaseResponse<PenerimaQueueResponse> response = BaseResponse.success(queueWithDayLimit);
+        BaseResponse<PenerimaQueueWrapper> response = BaseResponse.success(queueWithDayLimit);
 
         return ResponseEntity.ok(response);
     } 
