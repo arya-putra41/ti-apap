@@ -5,6 +5,7 @@ import { onMounted, nextTick, ref, onBeforeUnmount } from 'vue';
 import { penerimaService, type PenerimaResponse } from '@/services/penerimaService';
 import { DataTable } from 'simple-datatables';
 import { format } from 'date-fns';
+import { exportToPdf } from '@/utils/penerimaPdfPrinter';
 
 import 'simple-datatables/dist/style.css'
 import { type RiwayatResponse } from '@/services/riwayatService';
@@ -102,6 +103,12 @@ const formatKondisiKhusus = (val: string | null | undefined): string => {
     return val.toLowerCase().split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
 }
 
+const createPdf = () => {
+    if (!penerima.value) return;
+
+    exportToPdf(penerima.value);
+}
+
 onMounted(loadPenerima)
 
 onBeforeUnmount(() => {
@@ -157,6 +164,10 @@ onBeforeUnmount(() => {
                             <VButton class="bg-red-100 hover:bg-red-200 text-red-800">Nonaktifkan</VButton>
                         </RouterLink>
 
+                        <span>
+                            <VButton v-if="penerima.status === 'AKTIF'" @click="createPdf" class="border border-black hover:bg-pink-200 text-black">Unduh Kartu</VButton>
+                        </span>
+
                         <RouterLink :to="`/penerima/${penerima.id}/tinjau-ulang`" v-if="penerima.status === 'TERVERIFIKASI'">
                             <VButton class="bg-blue-100 hover:bg-blue-200 text-blue-800">Tinjau Ulang</VButton>
                         </RouterLink>
@@ -204,19 +215,24 @@ onBeforeUnmount(() => {
                         <p class="text-lg font-bold">{{ format(new Date(penerima.tanggalPengajuan), 'd MMM yyyy, hh:mm') }}</p>
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div>
                         <span class="text-sm text-gray-500">Keterangan Kondisi</span>
                         <p class="text-lg font-bold">{{ penerima.keterangan ? penerima.keterangan : "Tidak Ada" }}</p>
                     </div>
 
-                    <div>
+                    <div v-if="penerima.tanggalVerifikasi">
                         <span class="text-sm text-gray-500">Tanggal Verifikasi</span>
                         <p class="text-lg font-bold">{{ penerima.tanggalVerifikasi ? format(new Date(penerima.tanggalVerifikasi), 'd MMM yyyy, hh:mm') : 'Belum Diverifikasi' }}</p>
                     </div>
 
-                    <div>
+                    <div v-if="penerima.petugasVerifikasi">
                         <span class="text-sm text-gray-500">Petugas Verifikasi</span>
-                        <p class="text-lg font-bold">{{ penerima.petugasVerifikasi ? penerima.petugasVerifikasi.nama + " - " + penerima.petugasVerifikasi.wilayahTugas : 'Belum Diverifikasi' }}</p>
+                        <p class="text-lg font-bold">{{ penerima.petugasVerifikasi.nama + " - " + penerima.petugasVerifikasi.wilayahTugas }}</p>
+                    </div>  
+
+                    <div v-if="penerima.tanggalAktivasi">
+                        <span class="text-sm text-gray-500">Tanggal Aktivasi</span>
+                        <p class="text-lg font-bold">{{  format(new Date(penerima.tanggalAktivasi), 'd MMM yyyy, hh:mm') }}</p>
                     </div>
                 </div>
             </div>

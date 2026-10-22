@@ -59,6 +59,7 @@ export interface PenerimaResponse {
     status: string
     tanggalPengajuan: Date
     tanggalVerifikasi: Date
+    tanggalAktivasi: Date
     petugasVerifikasi: PetugasVerifikasi
     riwayat: RiwayatResponse[]
 }

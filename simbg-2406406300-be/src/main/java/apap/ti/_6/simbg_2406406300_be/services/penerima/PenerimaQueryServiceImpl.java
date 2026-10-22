@@ -1,5 +1,6 @@
 package apap.ti._6.simbg_2406406300_be.services.penerima;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -64,6 +65,8 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
             .map(riwayat -> riwayat.toResponse())
             .toList();
 
+        ZonedDateTime tanggalAktivasi = riwayatService.findAktivasiOfPenerima(penerima);
+
         PenerimaResponse response = PenerimaResponse.builder()
             .id(penerima.getId())
             .nama(penerima.getNama())
@@ -77,8 +80,8 @@ public class PenerimaQueryServiceImpl implements PenerimaQueryService {
             .status(penerima.getStatus())
             .tanggalPengajuan(penerima.getTanggalPengajuan())
             .tanggalVerifikasi(penerima.getTanggalVerifikasi())
+            .tanggalAktivasi(tanggalAktivasi)
             .petugasVerifikasi(penerima.getPetugasVerifikasi())
-
             .riwayat(listRiwayat)
             .build();
 

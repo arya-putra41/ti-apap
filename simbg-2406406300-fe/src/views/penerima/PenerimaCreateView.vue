@@ -31,8 +31,6 @@ const addPenerima = async (bodyRequest: CreatePenerimaRequest) => {
     }
     toast.success('Penerima didaftarkan!')
 }
-
-console.log("profileModel", profileModel);
 </script>
 
 <template>

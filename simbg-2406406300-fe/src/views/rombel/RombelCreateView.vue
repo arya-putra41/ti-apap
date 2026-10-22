@@ -29,8 +29,6 @@ const addRombel = async (bodyRequest: CreateRombelRequest) => {
     }
     toast.success('Rombel didaftarkan!')
 }
-
-console.log("profileModel", profileModel);
 </script>
 
 <template>

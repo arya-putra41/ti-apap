@@ -254,6 +254,8 @@ public class PenerimaServiceImpl implements PenerimaService {
             .map(riwayat -> riwayat.toResponse())
             .toList();
 
+        ZonedDateTime tanggalAktivasi = riwayatService.findAktivasiOfPenerima(penerima);
+
         PenerimaResponse response = PenerimaResponse.builder()
             .id(penerima.getId())
             .nama(penerima.getNama())
@@ -267,6 +269,7 @@ public class PenerimaServiceImpl implements PenerimaService {
             .status(penerima.getStatus())
             .tanggalPengajuan(penerima.getTanggalPengajuan())
             .tanggalVerifikasi(penerima.getTanggalVerifikasi())
+            .tanggalAktivasi(tanggalAktivasi)
             .petugasVerifikasi(penerima.getPetugasVerifikasi())
 
             .riwayat(listRiwayat)

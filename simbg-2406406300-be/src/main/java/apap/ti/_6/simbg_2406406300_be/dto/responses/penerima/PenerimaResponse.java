@@ -28,6 +28,7 @@ public class PenerimaResponse {
     private String status;
     private ZonedDateTime tanggalPengajuan;
     private ZonedDateTime tanggalVerifikasi;
+    private ZonedDateTime tanggalAktivasi;
     private PetugasVerifikasi petugasVerifikasi;
 
     private List<RiwayatResponse> riwayat;

@@ -104,14 +104,14 @@ onBeforeUnmount(() => {
             <div class="flex justify-between items-center pb-4 border-b">
                 <h1 class="text-2xl font-bold text-gray-800">Daftar Penerima Manfaat</h1>
                 <div class="flex flex-row gap-2">
-                    <RouterLink to="/penerima/create">
-                        <VButton class="add-button">Tambah Penerima</VButton>
-                    </RouterLink>
                     <RouterLink to="/penerima/antrian-verifikasi">
-                        <VButton class="add-button">Antrian Verifikasi</VButton>
+                        <VButton class="extra-options-button">Antrian Verifikasi</VButton>
                     </RouterLink>
                     <RouterLink to="/penerima/statistik">
-                        <VButton class="add-button">Statistik Penerima</VButton>
+                        <VButton class="extra-options-button">Statistik Penerima</VButton>
+                    </RouterLink>
+                    <RouterLink to="/penerima/create">
+                        <VButton class="add-button">Tambah Penerima</VButton>
                     </RouterLink>
                 </div>
             </div>
@@ -188,7 +188,11 @@ onBeforeUnmount(() => {
 @reference "@/assets/main.css";
 
 .add-button {
-    @apply bg-pink-600 hover:bg-pink-800 text-white px-4 py-2 rounded-lg font-medium transition;
+    @apply bg-pink-600 hover:bg-pink-800 text-white px-4 py-2 rounded-lg transition;
+}
+
+.extra-options-button {
+    @apply border border-black hover:bg-pink-200 text-black px-4 py-2 rounded-lg transition;
 }
 
 .detail-button {
