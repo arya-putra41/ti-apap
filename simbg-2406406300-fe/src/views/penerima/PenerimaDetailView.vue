@@ -18,6 +18,10 @@ const riwayatList = ref<RiwayatResponse[] | null>(null)
 const loading = ref(false)
 const error = ref('')
 
+// State untuk Dialog Modal Aktivasi
+const showActivateModal = ref(false)
+const isActivating = ref(false)
+
 let dt: DataTable | null = null
 
 async function loadPenerima() {
@@ -33,6 +37,22 @@ async function loadPenerima() {
         error.value = 'Gagal memuat data penerima, coba lagi nanti'
     } finally {
         loading.value = false
+    }
+}
+
+// Fungsi eksekusi aktivasi
+const handleActivate = async () => {
+    isActivating.value = true
+    try {
+        // Sesuaikan nama method service dengan backend kamu (contoh: activatePenerima)
+        await penerimaService.activatePenerima(penerimaId)
+        showActivateModal.value = false
+        window.location.reload()
+    } catch (err) {
+        console.error(err)
+        alert('Gagal mengaktifkan penerima manfaat.')
+    } finally {
+        isActivating.value = false
     }
 }
 
@@ -121,24 +141,27 @@ onBeforeUnmount(() => {
                         <RouterLink :to="`/penerima/${penerima.id}/verifikasi`" v-if="penerima.status === 'DIAJUKAN'">
                             <VButton class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800">Verifikasi</VButton>
                         </RouterLink>
- 
-                        <RouterLink :to="`/penerima/${penerima.id}`" v-if="penerima.status === 'TERVERIFIKASI'">
-                            <VButton class="bg-green-100 hover:bg-green-200 text-green-800">Aktivasi</VButton>
-                        </RouterLink>
- 
+
+                        <!-- Tombol Aktivasi Pemicu Modal -->
+                        <span>
+                            <VButton v-if="penerima.status === 'TERVERIFIKASI'" @click="showActivateModal = true" class="bg-green-100 hover:bg-green-200 text-green-800 cursor-pointer">
+                                Aktivasi
+                            </VButton>
+                        </span>
+
                         <RouterLink :to="`/penerima/${penerima.id}/tolak`" v-if="penerima.status === 'DIAJUKAN' || penerima.status === 'TERVERIFIKASI'">
                             <VButton class="bg-red-100 hover:bg-red-200 text-red-800">Tolak</VButton>
                         </RouterLink>
- 
+
                         <RouterLink :to="`/penerima/${penerima.id}/nonaktifkan`" v-if="penerima.status === 'AKTIF'">
                             <VButton class="bg-red-100 hover:bg-red-200 text-red-800">Nonaktifkan</VButton>
                         </RouterLink>
- 
+
                         <RouterLink :to="`/penerima/${penerima.id}/tinjau-ulang`" v-if="penerima.status === 'TERVERIFIKASI'">
                             <VButton class="bg-blue-100 hover:bg-blue-200 text-blue-800">Tinjau Ulang</VButton>
                         </RouterLink>
- 
-                        <RouterLink :to="`/penerima/${penerima.id}/update`">
+
+                        <RouterLink :to="`/penerima/${penerima.id}/update`" v-if="penerima.status != 'DITOLAK' && penerima.status != 'NONAKTIF'">
                             <VButton class="border border-black hover:bg-pink-200 text-black">Ubah Data</VButton>
                         </RouterLink>
                     </div>
@@ -188,17 +211,18 @@ onBeforeUnmount(() => {
 
                     <div>
                         <span class="text-sm text-gray-500">Tanggal Verifikasi</span>
-                        <p class="text-lg font-bold">{{ penerima.tanggalVerifikasi ? format(new Date(penerima.tanggalVerifikasi), 'd MMM yyyy, hh:mm') : 'Belum Diverifikasi'}}</p>
+                        <p class="text-lg font-bold">{{ penerima.tanggalVerifikasi ? format(new Date(penerima.tanggalVerifikasi), 'd MMM yyyy, hh:mm') : 'Belum Diverifikasi' }}</p>
                     </div>
 
                     <div>
                         <span class="text-sm text-gray-500">Petugas Verifikasi</span>
-                        <p class="text-lg font-bold">{{ penerima.petugasVerifikasi ? penerima.petugasVerifikasi.nama + " - " + penerima.petugasVerifikasi.wilayahTugas : 'Belum Diverifikasi'}}</p>
+                        <p class="text-lg font-bold">{{ penerima.petugasVerifikasi ? penerima.petugasVerifikasi.nama + " - " + penerima.petugasVerifikasi.wilayahTugas : 'Belum Diverifikasi' }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Tabel Riwayat -->
         <div class="mx-auto w-full flex flex-col gap-4 bg-white drop-shadow-xl p-6 px-10 md:p-8 rounded-2xl divide-y">
             <h1 class="text-pink-600 font-bold text-2xl">Riwayat</h1>
 
@@ -230,7 +254,7 @@ onBeforeUnmount(() => {
                             <td class="font-bold text-gray-900 whitespace-nowrap py-3 px-4">
                                 {{ format(new Date(riwayat.tanggalPerubahan), 'dd MMM yyyy, hh:mm') }}
                             </td>
-                            <td class="py-3 px-4 flex flex-row">
+                            <td class="py-3 px-4 flex flex-row gap-1 items-center">
                                 <div v-if="riwayat.statusSebelumnya" :class="[
                                     'px-2.5 py-1 text-xs font-semibold rounded-full',
                                     bindClassForStatus(riwayat.statusSebelumnya)
@@ -249,6 +273,27 @@ onBeforeUnmount(() => {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Dialog Modal Aktivasi -->
+        <div v-if="showActivateModal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+                <h2 class="text-xl font-bold text-gray-900">Konfirmasi Aktivasi</h2>
+                <p class="text-gray-600 text-sm">
+                    Apakah Anda yakin ingin mengaktifkan penerima manfaat
+                    <span class="font-bold text-gray-900">{{ penerima?.nama }}</span>?
+                </p>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <VButton type="button" @click="showActivateModal = false" :disabled="isActivating" class="bg-gray-200 hover:bg-gray-300 text-gray-800">
+                        Batal
+                    </VButton>
+                    <VButton type="button" @click="handleActivate" :disabled="isActivating" class="bg-green-600 hover:bg-green-700 text-white font-semibold flex items-center gap-2">
+                        <span v-if="isActivating" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        {{ isActivating ? 'Memproses...' : 'Aktivasi' }}
+                    </VButton>
+                </div>
             </div>
         </div>
     </main>

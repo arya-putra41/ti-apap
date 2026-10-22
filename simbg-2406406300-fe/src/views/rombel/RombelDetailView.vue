@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
                     <!--Actions-->
                     <div class="flex flex-row gap-2">
                         <RouterLink :to="`/rombel/${rombel.id}/update`">
-                            <VButton class="border border-black hover:bg-pink-200 text-black">Edit Rombel</VButton>
+                            <VButton class="border border-black hover:bg-pink-200 text-black">Ubah Data</VButton>
                         </RouterLink>
 
                         <RouterLink :to="`/penerima/create`">

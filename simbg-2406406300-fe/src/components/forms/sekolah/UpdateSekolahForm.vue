@@ -27,93 +27,151 @@ const regencyList = ref<Wilayah[]>([])
 const districtList = ref<Wilayah[]>([])
 const villageList = ref<Wilayah[]>([])
 
+const selectedProvinceCode = ref('')
+const selectedRegencyCode = ref('')
+const selectedDistrictCode = ref('')
+
 const loading = ref(true)
 const errorMessage = ref('')
 
 onMounted(async () => {
-  try {
-    // 1. Load SELURUH daftar provinsi
-    provinceList.value = await wilayahService.getProvinsi()
+    try {
+        // Muat daftar provinsi terlebih dahulu
+        provinceList.value = await wilayahService.getProvinsi()
 
-    if (model.value.provinsi) {
-      // Dapatkan kode provinsi dari nama lama DB (misal: "32" untuk "Jawa Barat")
-      const provCode = await wilayahService.getProvinsiByName(model.value.provinsi)
+        // Cari kode berdasarkan nama provinsi yang tersimpan di DB
+        const province = provinceList.value.find(
+            p => p.name === model.value.provinsi
+        )
 
-      if (provCode) {
-        regencyList.value = await wilayahService.getKota(provCode)
-        model.value.provinsi = provCode // Set KODE ke model
+        if (!province) return
 
-        if (model.value.kota) {
-          const regCode = await wilayahService.getKotaByName(model.value.kota, provCode)
+        selectedProvinceCode.value = province.code
 
-          if (regCode) {
-            districtList.value = await wilayahService.getKecamatan(regCode)
-            model.value.kota = regCode // Set KODE ke model
+        // Ambil kabupaten/kota berdasarkan kode provinsi
+        regencyList.value = await wilayahService.getKota(
+            province.code
+        )
 
-            if (model.value.kecamatan) {
-              const distCode = await wilayahService.getKecamatanByName(model.value.kecamatan, regCode)
+        const regency = regencyList.value.find(
+            r => r.name === model.value.kota
+        )
 
-              if (distCode) {
-                villageList.value = await wilayahService.getKelurahan(distCode)
-                model.value.kecamatan = distCode // Set KODE ke model
+        if (!regency) return
 
-                if (model.value.desa) {
-                  const villCode = await wilayahService.getKelurahanByName(model.value.desa, distCode)
-                  if (villCode) {
-                    model.value.desa = villCode // Set KODE ke model
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        selectedRegencyCode.value = regency.code
+
+        // Ambil kecamatan berdasarkan kode kabupaten/kota
+        districtList.value = await wilayahService.getKecamatan(
+            regency.code
+        )
+
+        const district = districtList.value.find(
+            d => d.name === model.value.kecamatan
+        )
+
+        if (!district) return
+
+        selectedDistrictCode.value = district.code
+
+        // Ambil desa/kelurahan berdasarkan kode kecamatan
+        villageList.value = await wilayahService.getKelurahan(
+            district.code
+        )
+
+        // model.value.provinsi, kota, kecamatan, dan desa
+        // tetap berisi nama yang sebelumnya tersimpan di DB.
+    } catch (err) {
+        console.error('Gagal memuat wilayah:', err)
+        errorMessage.value = 'Gagal memuat data wilayah.'
+    } finally {
+        loading.value = false
     }
-  } catch (err) {
-    console.error('Gagal memuat wilayah:', err)
-  } finally {
-    loading.value = false
-  }
 })
 
 // Watcher interaksi pengguna (selalu menggunakan kode angka)
-watch(() => model.value.provinsi, async (newProv) => {
-  if (loading.value) return
-  model.value.kota = ''
-  model.value.kecamatan = ''
-  model.value.desa = ''
-  regencyList.value = await wilayahService.getKota(newProv)
-})
+watch(
+    selectedProvinceCode,
+    async (newProvinceCode) => {
+        if (loading.value) return
 
-watch(() => model.value.kota, async (newKota) => {
-  if (loading.value) return
-  model.value.kecamatan = ''
-  model.value.desa = ''
-  districtList.value = await wilayahService.getKecamatan(newKota)
-})
+        model.value.provinsi =
+            provinceList.value.find(
+                p => p.code === newProvinceCode
+            )?.name ?? ''
 
-watch(() => model.value.kecamatan, async (newKec) => {
-  if (loading.value) return
-  model.value.desa = ''
-  villageList.value = await wilayahService.getKelurahan(newKec)
-})
+        // Reset wilayah di bawah provinsi
+        selectedRegencyCode.value = ''
+        selectedDistrictCode.value = ''
+
+        model.value.kota = ''
+        model.value.kecamatan = ''
+        model.value.desa = ''
+
+        regencyList.value = []
+        districtList.value = []
+        villageList.value = []
+
+        if (newProvinceCode) {
+            regencyList.value =
+                await wilayahService.getKota(newProvinceCode)
+        }
+    },
+    { flush: 'sync' }
+)
+
+watch(
+    selectedRegencyCode,
+    async (newRegencyCode) => {
+        if (loading.value) return
+
+        model.value.kota =
+            regencyList.value.find(
+                r => r.code === newRegencyCode
+            )?.name ?? ''
+
+        selectedDistrictCode.value = ''
+
+        model.value.kecamatan = ''
+        model.value.desa = ''
+
+        districtList.value = []
+        villageList.value = []
+
+        if (newRegencyCode) {
+            districtList.value =
+                await wilayahService.getKecamatan(newRegencyCode)
+        }
+    },
+    { flush: 'sync' }
+)
+
+watch(
+    selectedDistrictCode,
+    async (newDistrictCode) => {
+        if (loading.value) return
+
+        model.value.kecamatan =
+            districtList.value.find(
+                d => d.code === newDistrictCode
+            )?.name ?? ''
+
+        model.value.desa = ''
+        villageList.value = []
+
+        if (newDistrictCode) {
+            villageList.value =
+                await wilayahService.getKelurahan(newDistrictCode)
+        }
+    },
+    { flush: 'sync' }
+)
 
 const handleSubmit = async () => {
   try {
-    // Cari kembali NAMA wilayah berdasarkan KODE sebelum dikirim ke backend
-    const selectedProvName = provinceList.value.find(p => p.code === model.value.provinsi)?.name || model.value.provinsi
-    const selectedKotaName = regencyList.value.find(r => r.code === model.value.kota)?.name || model.value.kota
-    const selectedKecName = districtList.value.find(d => d.code === model.value.kecamatan)?.name || model.value.kecamatan
-    const selectedDesaName = villageList.value.find(v => v.code === model.value.desa)?.name || model.value.desa
-
     const payload: UpdateSekolahRequest = {
-      ...model.value,
-      provinsi: selectedProvName,
-      kota: selectedKotaName,
-      kecamatan: selectedKecName,
-      desa: selectedDesaName,
+      ...model.value
     }
-
     await props.action(payload)
   } catch (err: any) {
     errorMessage.value = err.response?.data?.message || 'Gagal mengubah data sekolah.'
@@ -144,7 +202,7 @@ const handleSubmit = async () => {
 
     <!-- Row 1: NPSN, Nama, Jenjang -->
     <div class="grid grid-cols-3 gap-4">
-      <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN" required />
+      <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN (8 digit)" disabled />
       <VInput v-model="model.namaSekolah" id="namaSekolah" name="namaSekolah" label="Nama Sekolah" required />
       <VSelect v-model="model.jenjang" id="jenjang" name="jenjang" label="Jenjang" required>
         <option value="">Pilih Jenjang</option>
@@ -156,15 +214,15 @@ const handleSubmit = async () => {
 
     <!-- Row 2: Lokasi (Gunakan :value="item.code") -->
     <div class="grid grid-cols-3 gap-4">
-      <VSelect v-model="model.provinsi" id="provinsi" name="provinsi" label="Provinsi" required>
+      <VSelect v-model="selectedProvinceCode" id="provinsi" name="provinsi" label="Provinsi" required>
         <option value="">Pilih Provinsi</option>
         <option v-for="prov in provinceList" :key="prov.code" :value="prov.code">{{ prov.name }}</option>
       </VSelect>
-      <VSelect v-model="model.kota" id="kota" name="kota" label="Kabupaten/Kota" required>
+      <VSelect v-model="selectedRegencyCode" id="kota" name="kota" label="Kabupaten/Kota" required>
         <option value="">Pilih Kabupaten/Kota</option>
         <option v-for="reg in regencyList" :key="reg.code" :value="reg.code">{{ reg.name }}</option>
       </VSelect>
-      <VSelect v-model="model.kecamatan" id="kecamatan" name="kecamatan" label="Kecamatan" required>
+      <VSelect v-model="selectedDistrictCode" id="kecamatan" name="kecamatan" label="Kecamatan" required>
         <option value="">Pilih Kecamatan</option>
         <option v-for="dist in districtList" :key="dist.code" :value="dist.code">{{ dist.name }}</option>
       </VSelect>
@@ -174,7 +232,7 @@ const handleSubmit = async () => {
     <div class="grid grid-cols-3 gap-4">
       <VSelect v-model="model.desa" id="desa" name="desa" label="Desa/Kelurahan" required>
         <option value="">Pilih Desa/Kelurahan</option>
-        <option v-for="vil in villageList" :key="vil.code" :value="vil.code">{{ vil.name }}</option>
+        <option v-for="vil in villageList" :key="vil.code" :value="vil.name">{{ vil.name }}</option>
       </VSelect>
       <VTextArea v-model="model.jalan" id="jalan" name="jalan" label="Alamat Jalan" required class="col-span-2"></VTextArea>
     </div>

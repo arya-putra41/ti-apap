@@ -112,7 +112,9 @@ onMounted(getSekolah)
         </div>
 
         <div class="flex justify-end gap-2 pt-4">
-            <VButton type="submit" class="bg-pink-600 hover:bg-pink-800 text-white">Simpan</VButton>
+            <VButton type="submit" :disabled="loading" class="bg-pink-600 hover:bg-pink-800 text-white disabled:opacity-50 cursor-pointer">
+                {{ loading ? 'Menyimpan...' : 'Simpan' }}
+            </VButton>
         </div>
     </form>
 </template>

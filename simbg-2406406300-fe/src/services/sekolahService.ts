@@ -76,5 +76,10 @@ export const sekolahService = {
         const response = await api.put<ApiResponse<SekolahResponse>>('/sekolah/update', request)
 
         return response.data.data
-    }
+    },
+    async deactivateSekolah(sekolahId: string): Promise<SekolahResponse> {
+        const response = await api.delete<ApiResponse<SekolahResponse>>(`/sekolah/${sekolahId}/nonaktifkan`)
+
+        return response.data.data
+    },
 }

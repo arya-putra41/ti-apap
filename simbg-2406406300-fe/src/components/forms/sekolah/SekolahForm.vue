@@ -28,6 +28,10 @@ const regencyList = ref<Wilayah[]>([])
 const districtList = ref<Wilayah[]>([])
 const villageList = ref<Wilayah[]>([])
 
+const selectedProvinceCode = ref('')
+const selectedRegencyCode = ref('')
+const selectedDistrictCode = ref('')
+
 // State untuk menangkap error dan status loading
 const errorMessage = ref('')
 const loading = ref(false)
@@ -60,9 +64,14 @@ onMounted(async () => {
 })
 
 // provinsi
-watch(
-  () => model.value.provinsi,
-  async (newProvinceCode) => {
+watch(selectedProvinceCode, async (newProvinceCode) => {
+    model.value.provinsi =
+        provinceList.value.find(p => p.code === newProvinceCode)?.name ?? ''
+
+    // Reset tingkat wilayah di bawahnya
+    selectedRegencyCode.value = ''
+    selectedDistrictCode.value = ''
+
     model.value.kota = ''
     model.value.kecamatan = ''
     model.value.desa = ''
@@ -72,38 +81,42 @@ watch(
     villageList.value = []
 
     if (newProvinceCode) {
-      regencyList.value = await wilayahService.getKota(newProvinceCode)
+        regencyList.value =
+            await wilayahService.getKota(newProvinceCode)
     }
-  }
-)
+})
 
 // kota
-watch(
-  () => model.value.kota,
-  async (newRegencyCode) => {
+watch(selectedRegencyCode, async (newRegencyCode) => {
+    model.value.kota =
+        regencyList.value.find(r => r.code === newRegencyCode)?.name ?? ''
+
+    selectedDistrictCode.value = ''
     model.value.kecamatan = ''
     model.value.desa = ''
+
     districtList.value = []
     villageList.value = []
 
     if (newRegencyCode) {
-      districtList.value = await wilayahService.getKecamatan(newRegencyCode)
+        districtList.value =
+            await wilayahService.getKecamatan(newRegencyCode)
     }
-  }
-)
+})
 
 // kecamatan
-watch(
-  () => model.value.kecamatan,
-  async (newDistrictCode) => {
+watch(selectedDistrictCode, async (newDistrictCode) => {
+    model.value.kecamatan =
+        districtList.value.find(d => d.code === newDistrictCode)?.name ?? ''
+
     model.value.desa = ''
     villageList.value = []
 
     if (newDistrictCode) {
-      villageList.value = await wilayahService.getKelurahan(newDistrictCode)
+        villageList.value =
+            await wilayahService.getKelurahan(newDistrictCode)
     }
-  }
-)
+})
 </script>
 
 <template>
@@ -134,7 +147,7 @@ watch(
 
         <!--Row 1: NPSN, Nama, Jenjang-->
         <div class="grid grid-cols-3 gap-4">
-            <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN" required/>
+            <VInput v-model="model.npsn" id="npsn" name="npsn" label="NPSN (8 digit)" required/>
             <VInput v-model="model.namaSekolah" id="namaSekolah" name="namaSekolah" label="Nama Sekolah" required/>
             <VSelect v-model="model.jenjang" id="jenjang" name="jenjang" label="Jenjang" required>
                 <option value="">Pilih Jenjang</option>
@@ -146,17 +159,17 @@ watch(
 
         <!-- Row 2: Lokasi -->
         <div class="grid grid-cols-3 gap-4">
-            <VSelect v-model="model.provinsi" id="provinsi" name="provinsi" label="Provinsi" required>
+            <VSelect v-model="selectedProvinceCode" id="provinsi" name="provinsi" label="Provinsi" required>
                 <option value="">Pilih Provinsi</option>
-                <option v-for="prov in provinceList" :key="prov.code" :value="prov.name">{{ prov.name }}</option>
+                <option v-for="prov in provinceList" :key="prov.code" :value="prov.code">{{ prov.name }}</option>
             </VSelect>
-            <VSelect v-model="model.kota" id="kota" name="kota" label="Kabupaten/Kota" required>
+            <VSelect v-model="selectedRegencyCode" id="kota" name="kota" label="Kabupaten/Kota" required>
                 <option value="">Pilih Kabupaten/Kota</option>
-                <option v-for="reg in regencyList" :key="reg.code" :value="reg.name">{{ reg.name }}</option>
+                <option v-for="reg in regencyList" :key="reg.code" :value="reg.code">{{ reg.name }}</option>
             </VSelect>
-            <VSelect v-model="model.kecamatan" id="kecamatan" name="kecamatan" label="Kecamatan" required>
+            <VSelect v-model="selectedDistrictCode" id="kecamatan" name="kecamatan" label="Kecamatan" required>
                 <option value="">Pilih Kecamatan</option>
-                <option v-for="dist in districtList" :key="dist.code" :value="dist.name">{{ dist.name }}</option>
+                <option v-for="dist in districtList" :key="dist.code" :value="dist.code">{{ dist.name }}</option>
             </VSelect>
         </div>
 

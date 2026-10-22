@@ -18,6 +18,11 @@ const rombelList = ref<RombelBasicResponse[] | null>(null)
 const loading = ref(false)
 const error = ref('')
 
+// State untuk Dialog Modal Nonaktifkan Sekolah
+const showDeactivateModal = ref(false)
+const isDeactivating = ref(false)
+const deactivateError = ref('')
+
 let dt: DataTable | null = null
 
 async function loadSekolah() {
@@ -33,6 +38,34 @@ async function loadSekolah() {
         error.value = 'Gagal memuat data sekolah, coba lagi nanti'
     } finally {
         loading.value = false
+    }
+}
+
+// Buka modal & reset error
+const openDeactivateModal = () => {
+    deactivateError.value = ''
+    showDeactivateModal.value = true
+}
+
+// Eksekusi penonaktifan sekolah
+const handleDeactivate = async () => {
+    isDeactivating.value = true
+    deactivateError.value = ''
+
+    try {
+        // Sesuaikan nama method service backend (misal: nonaktifkanSekolah atau deactivateSekolah)
+        await sekolahService.deactivateSekolah(sekolahId)
+        showDeactivateModal.value = false
+        window.location.reload()
+    } catch (err: any) {
+        console.error(err)
+        // Menangkap pesan error dari response backend (misal: "Sekolah masih memiliki rombel aktif")
+        deactivateError.value = 
+            err.response?.data?.message || 
+            err.response?.data?.error || 
+            'Gagal menonaktifkan sekolah. Pastikan tidak ada rombel yang masih aktif.'
+    } finally {
+        isDeactivating.value = false
     }
 }
 
@@ -98,16 +131,19 @@ onBeforeUnmount(() => {
                     <!--Actions-->
                     <div class="flex flex-row gap-2">
                         <RouterLink :to="`/sekolah/${sekolah.id}/update`">
-                            <VButton class="border border-black hover:bg-pink-200 text-black">Edit Sekolah</VButton>
+                            <VButton class="border border-black hover:bg-pink-200 text-black">Ubah Data Sekolah</VButton>
                         </RouterLink>
 
-                        <RouterLink :to="`/rombel/create?sekolahId=${sekolah.id}`" >
+                        <RouterLink :to="`/rombel/create?sekolahId=${sekolah.id}`">
                             <VButton class="border border-black hover:bg-pink-200 text-black">Tambah Rombel</VButton>
                         </RouterLink>
 
-                        <RouterLink :to="`/sekolah/${sekolah.id}/nonaktifkan`">
-                            <VButton class="bg-red-600 hover:bg-red-800 text-white font-semibold">Nonaktifkan Mitra</VButton>
-                        </RouterLink>
+                        <!-- Tombol Pemicu Modal Nonaktifkan -->
+                        <span>
+                            <VButton v-if="sekolah.statusMitra === 'AKTIF'" @click="openDeactivateModal" class="bg-red-600 hover:bg-red-800 text-white font-semibold cursor-pointer">
+                                Nonaktifkan Mitra
+                            </VButton>
+                        </span>
                     </div>
                 </div>
 
@@ -200,7 +236,7 @@ onBeforeUnmount(() => {
                             </td>
                             <td class="py-3 px-4">{{ rombel.tahunAjaran }}</td>
                             <td class="py-3 px-4">{{ rombel.kuotaPenerima }}</td>
-                            <td class="py-3 px-4">{{ rombel.sisaKuota }}</td>
+                            <td class="py-3 px-4">{{ rombel.jumlahPenerimaTerdaftar }}</td>
                             <td class="py-3 px-4">
                                 <span :class="[
                                     'px-2.5 py-1 text-xs font-semibold rounded-full',
@@ -220,6 +256,49 @@ onBeforeUnmount(() => {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Dialog Modal Nonaktifkan Sekolah -->
+        <div 
+            v-if="showDeactivateModal" 
+            class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm"
+        >
+            <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+                <h2 class="text-xl font-bold text-gray-900">Konfirmasi Nonaktifkan Sekolah</h2>
+                
+                <p class="text-gray-600 text-sm">
+                    Apakah Anda yakin ingin menonaktifkan mitra sekolah 
+                    <span class="font-bold text-gray-900">{{ sekolah?.namaSekolah }}</span>?
+                </p>
+
+                <!-- Pesan Error dari Backend jika Gagal (Misal: Masih ada Rombel Aktif) -->
+                <div v-if="deactivateError" class="p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex items-start gap-2">
+                    <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>{{ deactivateError }}</span>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <VButton 
+                        type="button" 
+                        @click="showDeactivateModal = false" 
+                        :disabled="isDeactivating"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                    >
+                        Batal
+                    </VButton>
+                    <VButton 
+                        type="button" 
+                        @click="handleDeactivate" 
+                        :disabled="isDeactivating"
+                        class="bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center gap-2"
+                    >
+                        <span v-if="isDeactivating" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        {{ isDeactivating ? 'Memproses...' : 'Nonaktifkan' }}
+                    </VButton>
+                </div>
             </div>
         </div>
     </main>

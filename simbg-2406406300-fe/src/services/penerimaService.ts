@@ -8,7 +8,7 @@ export interface CreatePenerimaRequest {
     nama: string
     nisn: string
     jenisKelamin: string
-    tanggalLahir: Date
+    tanggalLahir: string
     kondisiKhusus: string
     keterangan: string
 }
@@ -48,7 +48,7 @@ export interface UpdatePenerimaRequest {
     id: string
     nama: string
     jenisKelamin: string
-    tanggalLahir: Date
+    tanggalLahir: string
     kondisiKhusus: string
     keterangan: string
 }
@@ -85,6 +85,48 @@ export const penerimaService = {
         const response = await api.get<ApiResponse<PenerimaResponse>>(`/penerima/${id}`)
 
         return response.data.data
-    }
+    },
+
+    async createPenerima(request: CreatePenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.post<ApiResponse<PenerimaResponse>>('/penerima/create', request)
+
+        return response.data.data
+    },
+
+    async updatePenerima(request: UpdatePenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>('/penerima/update', request)
+
+        return response.data.data
+    },
+
+    async verifyPenerima(request: VerifyPenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>('/penerima/verifikasi', request)
+
+        return response.data.data
+    },
+
+    async activatePenerima(penerimaId: string): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>(`/penerima/${penerimaId}/aktivasi`)
+
+        return response.data.data
+    },
+
+    async rejectPenerima(request: RejectPenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>('/penerima/tolak', request)
+
+        return response.data.data
+    },
+
+    async deactivatePenerima(request: DeactivatePenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>('/penerima/nonaktifkan', request)
+
+        return response.data.data
+    },
+
+    async reviewPenerima(request: ReviewPenerimaRequest): Promise<PenerimaResponse> {
+        const response = await api.put<ApiResponse<PenerimaResponse>>('/penerima/tinjau-ulang', request)
+
+        return response.data.data
+    },
 }
 
